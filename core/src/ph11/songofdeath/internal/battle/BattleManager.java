@@ -1,9 +1,9 @@
 package ph11.songofdeath.internal.battle;
 
 public class BattleManager {
-    Scanner sc = new Scanner(System.in);
 
-    public Battle(Party playerParty, Location battleLocation){
+
+    public BattleManager(Party playerParty, Location battleLocation){
         boolean battleFinished = false;
         Location.EnemyList<Enemy> locationEnemyList = battleLocation.generateEnemyList();
         Party enemyParty = new Party(4);
