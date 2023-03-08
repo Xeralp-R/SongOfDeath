@@ -1,7 +1,7 @@
-package battle.location;
+package ph11.songofdeath.internal.location;
 
 import java.util.*;
-import battle.entity.Enemy;
+import ph11.songofdeath.internal.entities.Enemy;
 
 public class Location {
     private String name;

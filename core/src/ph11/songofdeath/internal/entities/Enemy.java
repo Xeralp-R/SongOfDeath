@@ -1,9 +1,10 @@
-package battle.entity;
+package ph11.songofdeath.internal.entities;
+
+import ph11.songofdeath.internal.location.Location;
 
 import java.util.concurrent.ThreadLocalRandom;
 
-import battle.location.Location;
-import battle.skills.HealingSkills;
+
 
 public class Enemy extends Entity {
 

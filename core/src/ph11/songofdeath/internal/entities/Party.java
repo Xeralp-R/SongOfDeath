@@ -1,7 +1,10 @@
-package battle.entity;
+package ph11.songofdeath.internal.entities;
 
 import java.util.*;
 
+/**
+ * A general class that can contain entities, whether they are player or enemy.
+ */
 public class Party {
     private ArrayList<Entity> entityList;
     private int totalPartyHP = 0;

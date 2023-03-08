@@ -1,34 +1,25 @@
 package ph11.songofdeath.internal.utilities;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class StatList {
 
-        public int maxHP;
-        public int maxSP;
-        public int attack;
-        public int defense;
-        public int speed;
+        List<Integer> stats = new ArrayList<>();
 
         public StatList(int maxHP, int maxSP, int attack, int defense, int speed){
-            this.maxHP = maxHP;
-            this.maxSP = maxSP;
-            this.attack = attack;
-            this.defense = defense;
-            this.speed = speed;
+            this.stats.set(StatEnum.MaxHP.getValue(), maxHP);
+            this.stats.set(StatEnum.MaxSP.getValue(), maxSP);
+            this.stats.set(StatEnum.Attack.getValue(), attack);
+            this.stats.set(StatEnum.Defense.getValue(), defense);
+            this.stats.set(StatEnum.Speed.getValue(), speed);
         }
 
-        public int getMaxHP(){
-            return maxHP;
+        public void setStat(StatEnum stat_type, int value) {
+            this.stats.set(stat_type.getValue(), value);
         }
-        public int getMaxSP(){
-            return maxSP;
-        }
-        public int getAttack(){
-            return attack;
-        }
-        public int getDefense(){
-            return defense;
-        }
-        public int getSpeed(){
-            return speed;
+
+        public int getStat(StatEnum stat_type) {
+            return this.stats.get(stat_type.getValue());
         }
 }

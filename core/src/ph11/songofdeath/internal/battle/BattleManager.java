@@ -1,5 +1,9 @@
 package ph11.songofdeath.internal.battle;
 
+
+import ph11.songofdeath.internal.entities.Party;
+import ph11.songofdeath.internal.location.Location;
+
 public class BattleManager {
 
 

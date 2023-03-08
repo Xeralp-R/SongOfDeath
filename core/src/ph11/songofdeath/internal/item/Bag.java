@@ -1,4 +1,4 @@
-package battle.item;
+package ph11.songofdeath.internal.item;
 
 import java.util.*;
 

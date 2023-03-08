@@ -1,4 +1,4 @@
-package battle.skills;
+package ph11.songofdeath.internal.skills;
 
 public class Modifiers {
     //class of buffs/defbuffs

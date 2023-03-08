@@ -1,4 +1,4 @@
-package battle.item.equipment;
+package ph11.songofdeath.internal.item.equipment;
 
 public class Armor extends Equipment {
 

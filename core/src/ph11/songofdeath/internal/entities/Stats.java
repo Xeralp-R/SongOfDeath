@@ -1,4 +1,4 @@
-package battle.entity;
+package ph11.songofdeath.internal.entities;
 
 public class Stats {
     public int maxHP;
