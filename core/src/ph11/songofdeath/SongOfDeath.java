@@ -16,7 +16,7 @@ import com.gdx.game.screen.CharacterSelectionScreen;
 import com.gdx.game.screen.GameScreen;
 import com.gdx.game.screen.MenuScreen;
 
-public class GdxGame extends Game {
+public class SongOfDeath extends Game {
 	private SpriteBatch batch;
 	private ResourceManager resourceManager;
 	private PreferenceManager preferenceManager = new PreferenceManager();
