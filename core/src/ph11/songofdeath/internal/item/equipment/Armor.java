@@ -1,20 +1,15 @@
 package ph11.songofdeath.internal.item.equipment;
 
+import ph11.songofdeath.internal.utilities.StatModifierList;
+
 public class Armor extends Equipment {
+    public final ArmorType armorType;
+    private final int armorSetCode;
 
-    private String type;
-
-    public String getType() {
-        return this.type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    protected Armor(String name, String description, String type, int maxHP, int maxSP, int attack, int defense, int speed) {
-        super(name, description, maxHP, maxSP, attack, defense, speed);
-        this.type = type;
+    protected Armor(String name, String description, StatModifierList modifiers, ArmorType type, int armorSetCode) {
+        super(name, description, modifiers);
+        this.armorType = type;
+        this.armorSetCode = armorSetCode;
     }
     
 }

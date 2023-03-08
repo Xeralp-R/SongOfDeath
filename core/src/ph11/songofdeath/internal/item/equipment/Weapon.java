@@ -1,9 +1,13 @@
 package ph11.songofdeath.internal.item.equipment;
 
-public class Weapon extends Equipment {
+import ph11.songofdeath.internal.utilities.StatModifierList;
 
-    public Weapon(String name, String description, int maxHP, int maxSP, int attack, int defense, int speed) {
-        super(name, description, maxHP, maxSP, attack, defense, speed);
+public class Weapon extends Equipment {
+    public final int strength;
+
+    public Weapon(String name, String description, int strength, StatModifierList modifiers) {
+        super(name, description, modifiers);
+        this.strength = strength;
     }
-    
+
 }
