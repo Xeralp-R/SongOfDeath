@@ -42,7 +42,7 @@ public class GlobalResourceManager {
 
     private GlobalResourceManager() {
         // Atlas!
-        assetManager.load("pixthulu-ui/pixthulu-ui.atlas", TextureAtlas.class);
+        assetManager.load("pixthulhu-ui/pixthulhu-ui.atlas", TextureAtlas.class);
         assetManager.load("terra-mother-ui/terra-mother-ui.atlas", TextureAtlas.class);
 
         // that one image!
@@ -50,7 +50,7 @@ public class GlobalResourceManager {
 
         assetManager.finishLoading();
 
-        leDieuDeLaMerAtlas = assetManager.get("pixthulu-ui/pixthulu-ui.atlas", TextureAtlas.class);
+        leDieuDeLaMerAtlas = assetManager.get("pixthulhu-ui/pixthulhu-ui.atlas", TextureAtlas.class);
         laMereDeLaTerreAtlas = assetManager.get("terra-mother-ui/terra-mother-ui.atlas", TextureAtlas.class);
 
         this.background = assetManager.get("images/graymountain.png", Texture.class);

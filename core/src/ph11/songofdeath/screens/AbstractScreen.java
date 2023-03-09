@@ -14,7 +14,7 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 
 import ph11.songofdeath.SongOfDeath;
 
-public abstract class AbstractScreen implements Screen {
+public class AbstractScreen implements Screen {
     protected final SongOfDeath game;
     protected OrthographicCamera defaultCamera;
 

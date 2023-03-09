@@ -10,61 +10,56 @@ package ph11.songofdeath;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.gdx.game.manager.PreferenceManager;
-import com.gdx.game.manager.ResourceManager;
-import com.gdx.game.screen.CharacterSelectionScreen;
-import com.gdx.game.screen.GameScreen;
-import com.gdx.game.screen.MenuScreen;
+import ph11.songofdeath.globalmanagers.GlobalResourceManager;
+import ph11.songofdeath.screens.MainMenuScreen;
 
 public class SongOfDeath extends Game {
+	public enum ScreenEnum {
+		MainMenu,
+		Options,
+		Overworld,
+		Battle
+	}
 	private SpriteBatch batch;
-	private ResourceManager resourceManager;
-	private PreferenceManager preferenceManager = new PreferenceManager();
-	private MenuScreen menuScreen;
-	private CharacterSelectionScreen characterSelectionScreen;
-	private GameScreen gameScreen;
+	public GlobalResourceManager resourceManager;
+	private MainMenuScreen mainMenuScreen;
 
 	public SpriteBatch getBatch() {
 		return batch;
 	}
 
-	public MenuScreen getMenuScreen() {
-		return menuScreen;
-	}
-
-	public CharacterSelectionScreen getCharacterSelectionScreen() {
-		return characterSelectionScreen;
-	}
-
-	public GameScreen getGameScreen() {
-		return gameScreen;
-	}
-
-	public void setGameScreen(GameScreen gameScreen) {
-		this.gameScreen = gameScreen;
-	}
-
-	public PreferenceManager getPreferenceManager() {
-		return preferenceManager;
+	public void changeScreen(ScreenEnum screen_type) {
+		// TODO: add transitions
+		switch (screen_type) {
+			case MainMenu:
+				this.setScreen(this.mainMenuScreen);
+				break;
+			case Options:
+				//this.setScreen(this.OptionsScreen);
+				break;
+			case Battle:
+				//this.setScreen(this.BattleScreen);
+				break;
+			case Overworld:
+				//this.setScreen(this.OverworldScreen);
+				break;
+		}
 	}
 
 	public void create() {
 		batch = new SpriteBatch();
-		resourceManager = new ResourceManager();
+		this.resourceManager = GlobalResourceManager.get();
 
-		menuScreen = new MenuScreen(this, resourceManager);
-		characterSelectionScreen = new CharacterSelectionScreen(this, resourceManager);
+		mainMenuScreen = new MainMenuScreen(this);
 
-		this.setScreen(menuScreen);
+		this.setScreen(mainMenuScreen);
 	}
 
 	@Override
 	public void dispose() {
 		super.dispose();
 		batch.dispose();
-		menuScreen.dispose();
-		characterSelectionScreen.dispose();
-		gameScreen.dispose();
+		mainMenuScreen.dispose();
 		resourceManager.dispose();
 	}
 }
