@@ -1,4 +1,4 @@
-package ph11.songofdeath.abstractions;
+package ph11.songofdeath.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
@@ -10,13 +10,9 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
-import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
 import ph11.songofdeath.globalmanagers.GlobalResourceManager;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public abstract class AbstractScreen implements Screen {
     protected final GdxGame gdxGame;
@@ -28,9 +24,9 @@ public abstract class AbstractScreen implements Screen {
     // main stage of each screen
     protected Stage stage;
 
-    public AbstractScreen(GdxGame gdxGame, ResourceManager resourceManager) {
+    public AbstractScreen(GdxGame gdxGame) {
         this.gdxGame = gdxGame;
-        this.resourceManager = resourceManager;
+        this.resourceManager = GlobalResourceManager.get();
 /*
         CameraManager cameraManager = new CameraManager();
         gameCam = cameraManager.createCamera(Gdx.graphics.getWidth()/3, Gdx.graphics.getHeight()/3, .4f);

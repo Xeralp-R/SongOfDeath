@@ -1,10 +1,11 @@
 package ph11.songofdeath.globalmanagers;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
-import com.badlogic.gdx.graphics.Colors;
+import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
+import com.badlogic.gdx.utils.ObjectMap;
 
 public class GlobalResourceManager {
     private static GlobalResourceManager instance;
@@ -24,21 +25,27 @@ public class GlobalResourceManager {
     public Texture background;
 
     // FONT
-    public final BitmapFont titleFont;
+    public final FreeTypeFontGenerator titleFontGenerator;
 
     // Color!
-    public Colors colorScheme;
+    public final ObjectMap<String, Color> colorScheme;
 
     private static final AssetManager assetManager = new AssetManager();
 
     private GlobalResourceManager() {
         // FONT
-        titleFont = new BitmapFont(Gdx.files.internal("fonts/pixel.fnt"), atlas.findRegion("pixel"), false);
+        this.titleFontGenerator = new FreeTypeFontGenerator(new FileHandle("fonts/AncientModernTales.ttf"));
+
+        // Color
+        colorScheme = new ObjectMap<>();
+        colorScheme.put("foreground", new Color(1, 1, 1, 1));
+        colorScheme.put("background", new Color(1, 0, 0, 0));
+        colorScheme.put("highlightBackground", new Color(1, 0.25F, 0.25F, 0.25F));
     }
 
     public void dispose() {
         assetManager.dispose();
 
-        titleFont.dispose();
+        titleFontGenerator.dispose();
     }
 }
