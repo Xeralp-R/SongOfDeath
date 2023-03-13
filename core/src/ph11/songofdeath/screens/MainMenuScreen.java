@@ -15,13 +15,15 @@ import java.util.ArrayList;
 
 public class MainMenuScreen extends AbstractScreen {
     private Table menuTable;
-    private Stage menuStage = new Stage();
+    private Stage menuStage;
     private Animation<TextureRegion> flowAnimation;
     private float stateTime;
 
     public MainMenuScreen(final SongOfDeath game) {
         super(game);
 
+        // initialize the stage and the table
+        menuStage = new Stage();
         menuTable = createTable();
         //handleBackground();
         super.createButton("New Game", 0, menuTable.getHeight()/10, menuTable);
@@ -118,14 +120,15 @@ public class MainMenuScreen extends AbstractScreen {
         //stateTime += Gdx.graphics.getDeltaTime();
         //TextureRegion currentFrame = flowAnimation.getKeyFrame(stateTime, true);
 
+        // the background itself
+        super.render(delta);
         game.getBatch().begin();
-        game.getBatch().draw(game.resourceManager.background, 0,0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        game.getBatch().draw(game.resourceManager.background, 0,0, 1280, 720);
         game.getBatch().end();
 
-        /*if (!game.resourceManager.isOptionScreen() && !resourceManager.isMenuNewGameScreen() && !resourceManager.isMenuLoadGameScreen()) {
-            menuStage.act(delta);
-            menuStage.draw();
-        }*/
+        // for the stuff atop the background
+        menuStage.act(delta);
+        menuStage.draw();
     }
 
     @Override
