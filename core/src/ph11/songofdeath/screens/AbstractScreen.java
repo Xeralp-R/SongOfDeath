@@ -9,7 +9,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
-import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
+import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
@@ -58,25 +58,36 @@ public class AbstractScreen implements Screen {
     }
 
     public TextButton createTextButton(String buttonText, float padX, float padY, Table table) {
-        BitmapFont buttonFont = game.resourceManager.titleFont18;
+        BitmapFont buttonFont = game.resourceManager.bodyFontSized;
 
-        TextureRegionDrawable buttonNormalTexture = new TextureRegionDrawable(
-                game.resourceManager.leDieuDeLaMerAtlas.findRegion("button")
-        );
-        buttonNormalTexture.tint(game.resourceManager.colorScheme.get("buttonNormalBackground"));
-
-        TextureRegionDrawable buttonPressedTexture = new TextureRegionDrawable(
-                game.resourceManager.leDieuDeLaMerAtlas.findRegion("button-pressed")
-        );
-        buttonPressedTexture.tint(game.resourceManager.colorScheme.get("buttonNormalBackground"));
-
+        Drawable buttonNormalTexture = game.resourceManager.leDieuDeLaMerBareSkin.newDrawable("button");
+        Drawable buttonPressedTexture = game.resourceManager.leDieuDeLaMerBareSkin.newDrawable("button-pressed");
         TextButton.TextButtonStyle buttonStyle = new TextButton.TextButtonStyle(
                 buttonNormalTexture, buttonPressedTexture, null, buttonFont
         );
+
         TextButton button = new TextButton(buttonText, buttonStyle);
         button.getLabel().setColor(this.game.resourceManager.colorScheme.get("foreground"));
 
         table.add(button).padLeft(padX).padTop(padY);
+        table.row();
+        return button;
+    }
+
+    public TextButton createTextButton(String buttonText, float width, float height, float padX, float padY, Table table) {
+        BitmapFont buttonFont = game.resourceManager.bodyFontSized;
+
+        Drawable buttonNormalTexture = game.resourceManager.leDieuDeLaMerBareSkin.newDrawable("button");
+        Drawable buttonPressedTexture = game.resourceManager.leDieuDeLaMerBareSkin.newDrawable("button-pressed");
+        TextButton.TextButtonStyle buttonStyle = new TextButton.TextButtonStyle(
+                buttonNormalTexture, buttonPressedTexture, null, buttonFont
+        );
+
+        TextButton button = new TextButton(buttonText, buttonStyle);
+        button.setSize(width, height);
+        button.getLabel().setColor(this.game.resourceManager.colorScheme.get("foreground"));
+
+        table.add(button).width(width).height(height).padLeft(padX).padTop(padY);
         table.row();
         return button;
     }

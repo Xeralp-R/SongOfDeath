@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.ObjectMap;
 
 public class GlobalResourceManager {
@@ -26,6 +27,8 @@ public class GlobalResourceManager {
     // Atlases!
     public final TextureAtlas laMereDeLaTerreAtlas;
     public final TextureAtlas leDieuDeLaMerAtlas;
+    public final Skin laMereDeLaTerreBareSkin;
+    public final Skin leDieuDeLaMerBareSkin;
 
     // IMAGES
     // image from https://imgur.com/9dn0cNv
@@ -33,7 +36,10 @@ public class GlobalResourceManager {
 
     // FONT
     public final FreeTypeFontGenerator titleFontGenerator;
-    public final BitmapFont titleFont18;
+    public final BitmapFont titleFontSized;
+
+    public final FreeTypeFontGenerator bodyFontGenerator;
+    public final BitmapFont bodyFontSized;
 
     // Color!
     public final ObjectMap<String, Color> colorScheme;
@@ -55,18 +61,28 @@ public class GlobalResourceManager {
 
         this.background = assetManager.get("images/graymountain.png", Texture.class);
 
+        leDieuDeLaMerBareSkin = new Skin();
+        leDieuDeLaMerBareSkin.addRegions(leDieuDeLaMerAtlas);
+        laMereDeLaTerreBareSkin = new Skin();
+        laMereDeLaTerreBareSkin.addRegions(laMereDeLaTerreAtlas);
+
         // FONT
         this.titleFontGenerator = new FreeTypeFontGenerator(new FileHandle("fonts/AncientModernTales.ttf"));
         FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
-        parameter.size = 18;
-        this.titleFont18 = this.titleFontGenerator.generateFont(parameter);
+        parameter.size = 108;
+        this.titleFontSized = this.titleFontGenerator.generateFont(parameter);
+
+        this.bodyFontGenerator = new FreeTypeFontGenerator(new FileHandle("fonts/PixeloidSans.ttf"));
+        // just reusing the same paramter
+        parameter.size = 32;
+        this.bodyFontSized = this.bodyFontGenerator.generateFont(parameter);
 
         // Color
         colorScheme = new ObjectMap<>();
         colorScheme.put("foreground", new Color(1, 1, 1, 1));
         colorScheme.put("background", new Color(1, 0, 0, 0));
-        colorScheme.put("buttonNormalBackground", new Color(1, 0.25F, 0.25F, 0.25F));
-        colorScheme.put("buttonPressedBackground", new Color(1, 0.15F, 0.15F, 0.15F));
+        colorScheme.put("buttonNormalBackground", new Color(0.25F, 0.25F, 0.25F, 1));
+        colorScheme.put("buttonPressedBackground", new Color(0.15F, 0.15F, 0.15F, 1));
     }
 
     public void dispose() {

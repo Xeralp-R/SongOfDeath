@@ -11,10 +11,10 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import ph11.songofdeath.SongOfDeath;
 
 public class MainMenuScreen extends AbstractScreen {
-    private Table menuTable;
-    private Stage menuStage;
-    private Animation<TextureRegion> flowAnimation;
-    private float stateTime;
+    private final Table menuTable;
+    private final Stage menuStage;
+    //private Animation<TextureRegion> flowAnimation;
+    //private float stateTime;
 
     public MainMenuScreen(final SongOfDeath game) {
         super(game);
@@ -25,9 +25,9 @@ public class MainMenuScreen extends AbstractScreen {
         //handleBackground();
 
         // title text
-        createLabel("Song of Death", 108, 0, menuTable.getHeight()/10, menuTable);
+        createLabel("Song of Death", 120, 0, 0, menuTable);
 
-        Actor newButton = createTextButton("New Game", 0, menuTable.getHeight()/10, menuTable);
+        Actor newButton = createTextButton("New Game", 300, 110, 0, 30, menuTable);
         newButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent even, float x, float y) {
@@ -36,7 +36,7 @@ public class MainMenuScreen extends AbstractScreen {
             }
         });
 
-        Actor loadButton = createTextButton("Load Game", 0, 10, menuTable);
+        Actor loadButton = createTextButton("Load Game", 300, 110, 0, 10, menuTable);
         loadButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent even, float x, float y) {
@@ -45,7 +45,7 @@ public class MainMenuScreen extends AbstractScreen {
             }
         });
 
-        Actor optionButton = createTextButton("Options", 0, 10, menuTable);
+        Actor optionButton = createTextButton("Options", 300, 110, 0, 10, menuTable);
         optionButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent even, float x, float y) {
@@ -54,7 +54,7 @@ public class MainMenuScreen extends AbstractScreen {
             }
         });
 
-        Actor exitButton = createTextButton("Exit", 0, 10, menuTable);
+        Actor exitButton = createTextButton("Exit", 300, 110, 0, 10, menuTable);
         exitButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent even, float x, float y) {
