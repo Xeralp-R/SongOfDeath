@@ -1,31 +1,65 @@
+/**
+ * The main file, that controls which screen you go to
+ * and what you actually see.
+ *
+ * Lightly (or heavily) adapted from Hugo Descottes
+ * GdxGame
+ */
+
 package ph11.songofdeath;
 
-import com.badlogic.gdx.ApplicationAdapter;
-import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.Game;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.utils.ScreenUtils;
+import ph11.songofdeath.globalmanagers.GlobalResourceManager;
+import ph11.songofdeath.screens.MainMenuScreen;
 
-public class SongOfDeath extends ApplicationAdapter {
-	SpriteBatch batch;
-	Texture img;
-	
-	@Override
-	public void create () {
+public class SongOfDeath extends Game {
+	public enum ScreenEnum {
+		MainMenu,
+		Options,
+		Overworld,
+		Battle
+	}
+	private SpriteBatch batch;
+	public GlobalResourceManager resourceManager;
+	private MainMenuScreen mainMenuScreen;
+
+	public SpriteBatch getBatch() {
+		return batch;
+	}
+
+	public void changeScreen(ScreenEnum screen_type) {
+		// TODO: add transitions
+		switch (screen_type) {
+			case MainMenu:
+				this.setScreen(this.mainMenuScreen);
+				break;
+			case Options:
+				//this.setScreen(this.OptionsScreen);
+				break;
+			case Battle:
+				//this.setScreen(this.BattleScreen);
+				break;
+			case Overworld:
+				//this.setScreen(this.OverworldScreen);
+				break;
+		}
+	}
+
+	public void create() {
 		batch = new SpriteBatch();
-		img = new Texture("badlogic.jpg");
+		this.resourceManager = GlobalResourceManager.get();
+
+		mainMenuScreen = new MainMenuScreen(this);
+
+		this.setScreen(mainMenuScreen);
 	}
 
 	@Override
-	public void render () {
-		ScreenUtils.clear(1, 0, 0, 1);
-		batch.begin();
-		batch.draw(img, 0, 0);
-		batch.end();
-	}
-	
-	@Override
-	public void dispose () {
+	public void dispose() {
+		super.dispose();
 		batch.dispose();
-		img.dispose();
+		mainMenuScreen.dispose();
+		resourceManager.dispose();
 	}
 }
