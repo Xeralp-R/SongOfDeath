@@ -1,7 +1,6 @@
 package ph11.songofdeath.screens;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -10,8 +9,6 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import ph11.songofdeath.SongOfDeath;
-
-import java.util.ArrayList;
 
 public class MainMenuScreen extends AbstractScreen {
     private Table menuTable;
@@ -23,12 +20,14 @@ public class MainMenuScreen extends AbstractScreen {
         super(game);
 
         // initialize the stage and the table
-        menuStage = new Stage();
+        menuStage = new Stage(super.viewport, game.getBatch());
         menuTable = createTable();
         //handleBackground();
-        super.createButton("New Game", 0, menuTable.getHeight()/10, menuTable);
 
-        Actor newButton = menuTable.getCells().get(0).getActor();
+        // title text
+        createLabel("Song of Death", 108, 0, menuTable.getHeight()/10, menuTable);
+
+        Actor newButton = createTextButton("New Game", 0, menuTable.getHeight()/10, menuTable);
         newButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent even, float x, float y) {
@@ -37,9 +36,7 @@ public class MainMenuScreen extends AbstractScreen {
             }
         });
 
-        createButton("Load Game", 0, menuTable.getHeight()/15, menuTable);
-
-        Actor loadButton = menuTable.getCells().get(1).getActor();
+        Actor loadButton = createTextButton("Load Game", 0, 10, menuTable);
         loadButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent even, float x, float y) {
@@ -48,9 +45,7 @@ public class MainMenuScreen extends AbstractScreen {
             }
         });
 
-        createButton("Options", 0, menuTable.getHeight()/10, menuTable);
-
-        Actor optionButton = menuTable.getCells().get(2).getActor();
+        Actor optionButton = createTextButton("Options", 0, 10, menuTable);
         optionButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent even, float x, float y) {
@@ -59,9 +54,7 @@ public class MainMenuScreen extends AbstractScreen {
             }
         });
 
-        createButton("Exit", 0, menuTable.getHeight()/9, menuTable);
-
-        Actor exitButton = menuTable.getCells().get(3).getActor();
+        Actor exitButton = createTextButton("Exit", 0, 10, menuTable);
         exitButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent even, float x, float y) {
@@ -91,22 +84,6 @@ public class MainMenuScreen extends AbstractScreen {
 
         flowAnimation = animationManager.setAnimation(flowFrames);
     }*/
-
-    private void handleExitButton() {
-
-    }
-
-    private void handleOptionButton() {
-
-    }
-
-    private void handleNewButton() {
-
-    }
-
-    private void handleLoadButton() {
-
-    }
 
     @Override
     public void show() {

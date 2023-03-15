@@ -4,7 +4,9 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
@@ -32,7 +34,30 @@ public class AbstractScreen implements Screen {
         stage = new Stage(viewport, game.getBatch());
     }
 
-    public void createButton(String buttonText, float posX, float posY, Table table) {
+    public Table createTable() {
+        Table table = new Table();
+        table.setBounds(0,0, stage.getWidth(), stage.getHeight());
+        return table;
+    }
+
+    public Label createLabel(String labelText, int fontSize, float padX, float padY, Table table) {
+        // generate the font
+        FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
+        parameter.size = fontSize;
+        BitmapFont labelFont = game.resourceManager.titleFontGenerator.generateFont(parameter);
+
+        // generate the stylings for the font
+        Label.LabelStyle style = new Label.LabelStyle(labelFont, game.resourceManager.colorScheme.get("foreground"));
+
+        // generate the actual label
+        Label label = new Label(labelText, style);
+
+        table.add(label).padLeft(padX).padTop(padY);
+        table.row();
+        return label;
+    }
+
+    public TextButton createTextButton(String buttonText, float padX, float padY, Table table) {
         BitmapFont buttonFont = game.resourceManager.titleFont18;
 
         TextureRegionDrawable buttonNormalTexture = new TextureRegionDrawable(
@@ -51,14 +76,9 @@ public class AbstractScreen implements Screen {
         TextButton button = new TextButton(buttonText, buttonStyle);
         button.getLabel().setColor(this.game.resourceManager.colorScheme.get("foreground"));
 
-        table.add(button).padLeft(posX).padTop(posY);
+        table.add(button).padLeft(padX).padTop(padY);
         table.row();
-    }
-
-    public Table createTable() {
-        Table table = new Table();
-        table.setBounds(0,0, (float) stage.getWidth(), (float) stage.getHeight());
-        return table;
+        return button;
     }
 
     @Override
