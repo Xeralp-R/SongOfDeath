@@ -16,6 +16,7 @@ public class SongOfDeath extends ApplicationAdapter {
 		batch = new SpriteBatch();
 		img = new Texture("badlogic.jpg");
 		game = new SongOfDeathGame();
+		game.create();
 	}
 
 	@Override

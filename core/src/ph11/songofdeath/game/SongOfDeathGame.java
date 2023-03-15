@@ -10,7 +10,7 @@ public class SongOfDeathGame extends Game {
     @Override
     public void create() {
         battleScreen = new BattleScreen(this);
-        setScreen(battleScreen);
+        this.setScreen(battleScreen);
     }
 
     @Override
