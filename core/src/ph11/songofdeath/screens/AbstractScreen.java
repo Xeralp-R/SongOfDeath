@@ -3,13 +3,16 @@ package ph11.songofdeath.screens;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
@@ -38,6 +41,14 @@ public class AbstractScreen implements Screen {
         Table table = new Table();
         table.setBounds(0,0, stage.getWidth(), stage.getHeight());
         return table;
+    }
+
+    public Image createImage(Texture imageProper, float padX, float padY, Table table) {
+        Image image = new Image(imageProper);
+        image.setSize(64, 64);
+        table.add(image).padLeft(padX).padTop(padY);
+        table.row();
+        return image;
     }
 
     public Label createLabel(String labelText, int fontSize, float padX, float padY, Table table) {

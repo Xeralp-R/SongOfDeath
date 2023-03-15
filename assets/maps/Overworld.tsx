@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<tileset version="1.10" tiledversion="1.10.0" name="Overworld" tilewidth="64" tileheight="64" tilecount="27" columns="0">
+<tileset version="1.9" tiledversion="1.9.2" name="Overworld" tilewidth="64" tileheight="64" tilecount="27" columns="0">
  <grid orientation="orthogonal" width="1" height="1"/>
  <tile id="49">
   <image width="64" height="64" source="x64/Flower1-1.png-1.png (1).png"/>
@@ -71,7 +71,7 @@
   <image width="64" height="64" source="x64/Temp. Enemy-1.png.png"/>
  </tile>
  <tile id="55">
-  <image width="64" height="64" source="../../../OneDrive/Desktop/Graphics/x64/Cliff Top.png"/>
+  <image width="64" height="64" source="x64/Cliff Top.png"/>
  </tile>
  <tile id="47">
   <image width="64" height="64" source="x64/Cliff Middle.png"/>
@@ -80,6 +80,6 @@
   <image width="64" height="64" source="x64/Cliff Bottom.png"/>
  </tile>
  <tile id="56">
-  <image width="64" height="64" source="../../../OneDrive/Desktop/Graphics/x64/X.png"/>
+  <image width="64" height="64" source="x64/X.png"/>
  </tile>
 </tileset>

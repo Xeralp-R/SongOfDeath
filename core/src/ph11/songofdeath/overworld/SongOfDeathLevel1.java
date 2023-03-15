@@ -13,7 +13,7 @@ import ph11.songofdeath.screens.OverworldScreen;
 public class SongOfDeathLevel1 extends AbstractSongOfDeathLevel {
     private GlobalResourceManager resourceManager;
     private SpriteBatch batch;
-    private AssetManager assetManager = new AssetManager();
+    private static final AssetManager assetManager = new AssetManager();
     public final TiledMap level1;
     // TODO: GET IT OUT OF THE MAIN CLASS!
     private OverworldScreen overworldScreen;
@@ -25,13 +25,14 @@ public class SongOfDeathLevel1 extends AbstractSongOfDeathLevel {
         assetManager.setLoader(TiledMap.class, new TmxMapLoader(new InternalFileHandleResolver()));
 
         assetManager.load("overworldentities/player/temp-character.png", Texture.class);
-        assetManager.load("maps/level1.0.tmx", TiledMap.class);
+        //assetManager.load("maps/Level1.tmx", TiledMap.class);
 
         assetManager.finishLoading();
 
-        this.level1 = assetManager.get("maps/level1.0.tmx");
+        //this.level1 = assetManager.get("maps/Level1.tmx");
         this.playerRepresentation = new OverworldRepresentation(assetManager.<Texture>get("overworldentities/player/temp-character.png"));
 
+        this.level1 = new TmxMapLoader().load("maps/Level1.tmx");
         batch = new SpriteBatch();
         this.resourceManager = GlobalResourceManager.get();
 

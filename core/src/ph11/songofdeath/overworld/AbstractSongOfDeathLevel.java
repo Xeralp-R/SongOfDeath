@@ -8,8 +8,8 @@ import ph11.songofdeath.globalmanagers.GlobalResourceManager;
 abstract public class AbstractSongOfDeathLevel implements AbstractSongOfDeath {
     SongOfDeath game;
     protected OverworldRepresentation playerRepresentation;
-    public static final float MapUnit = 1/16f;
-    public final static int SquareTileSize = 32;
+    public static final float MapUnit = 1f;
+    public final static int SquareTileSize = 64;
 
     public AbstractSongOfDeathLevel(SongOfDeath game) {
         this.game = game;
