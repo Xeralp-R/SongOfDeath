@@ -4,12 +4,16 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.ScreenUtils;
-import com.gdx.game.GdxGame;
+import com.badlogic.gdx.math.Vector3;
+
+/*
+import ph11.songofdeath.SongOfDeath;
 import com.gdx.game.audio.AudioManager;
 import com.gdx.game.audio.AudioObserver;
 import com.gdx.game.camera.CameraStyles;
@@ -23,63 +27,51 @@ import com.gdx.game.manager.ResourceManager;
 import com.gdx.game.map.Map;
 import com.gdx.game.map.MapFactory;
 import com.gdx.game.map.MapManager;
-import com.gdx.game.profile.ProfileManager;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.gdx.game.profile.ProfileManager;*/
+import ph11.songofdeath.overworld.AbstractSongOfDeathLevel;
+import ph11.songofdeath.overworld.OverworldRepresentation;
 
 import java.util.ArrayList;
 
 public class OverworldScreen extends AbstractScreen {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(GameScreen.class);
     private static GameState gameState;
     protected OrthogonalTiledMapRenderer mapRenderer = null;
-    protected MapManager mapManager;
+    //protected MapManager mapManager;
+    protected TiledMap tiledMap;
     protected OrthographicCamera camera;
-    protected OrthographicCamera hudCamera;
-    private final Stage gameStage = new Stage();
     private Json json;
-    private GdxGame game;
+    private AbstractSongOfDeathLevel game;
     private InputMultiplexer multiplexer;
-    private Entity player;
-    private PlayerHUD playerHUD;
+    private OverworldRepresentation player;
     private float startX;
     private float startY;
     private float levelWidth;
     private float levelHeight;
     private float endX;
     private float endY;
-    private AudioObserver.AudioTypeEvent musicTheme;
-    public GameScreen(GdxGame gdxGame, ResourceManager resourceManager) {
-        super(gdxGame, resourceManager);
-        game = gdxGame;
-        mapManager = new MapManager();
+
+    private final Stage overworldStage;
+
+    public OverworldScreen(AbstractSongOfDeathLevel game, TiledMap map) {
+        super(game);
+        this.game = game;
         json = new Json();
+        this.tiledMap = map;
+
+        overworldStage = new Stage(super.viewport, game.getBatch());
 
         setGameState(GameState.RUNNING);
 
-        //_camera setup
-        setupViewport(15, 15);
+        // for now...
+        camera = super.defaultCamera;
 
-        //get the current size
-        camera = new OrthographicCamera();
-        camera.setToOrtho(false, VIEWPORT.viewportWidth, VIEWPORT.viewportHeight);
-
-        player = EntityFactory.getInstance().getEntity(ProfileManager.getInstance().getProperty("playerCharacter", EntityFactory.EntityType.class));
-        player.registerObserver(this);
-
-        mapManager.setPlayer(player);
-        mapManager.setCamera(camera);
-
-        hudCamera = new OrthographicCamera();
-        hudCamera.setToOrtho(false, VIEWPORT.physicalWidth, VIEWPORT.physicalHeight);
-
-        playerHUD = new PlayerHUD(hudCamera, player, mapManager);
+        // the old way had a way to get it out of a save state
+        // for now, we're just going to use a straight one
+        player = game.getPlayerRepresentation();
 
         multiplexer = new InputMultiplexer();
-        multiplexer.addProcessor(playerHUD.getStage());
-        multiplexer.addProcessor(player.getInputProcessor());
-        Gdx.input.setInputProcessor(multiplexer);
+        Gdx.input.setInputProcessor(overworldStage);
     }
 
     public static GameState getGameState() {
@@ -91,6 +83,7 @@ public class OverworldScreen extends AbstractScreen {
             case RUNNING:
                 gameState = GameState.RUNNING;
                 break;
+                /*
             case LOADING:
                 ProfileManager.getInstance().loadProfile();
                 gameState = GameState.RUNNING;
@@ -98,7 +91,7 @@ public class OverworldScreen extends AbstractScreen {
             case SAVING:
                 ProfileManager.getInstance().saveProfile();
                 gameState = GameState.PAUSED;
-                break;
+                break;*/
             case PAUSED:
                 if (gameState == GameState.PAUSED) {
                     gameState = GameState.RUNNING;
@@ -116,53 +109,13 @@ public class OverworldScreen extends AbstractScreen {
 
     }
 
-    private static void setupViewport(int width, int height) {
-        //Make the viewport a percentage of the total display area
-        VIEWPORT.virtualWidth = width;
-        VIEWPORT.virtualHeight = height;
-
-        //Current viewport dimensions
-        VIEWPORT.viewportWidth = VIEWPORT.virtualWidth;
-        VIEWPORT.viewportHeight = VIEWPORT.virtualHeight;
-
-        //pixel dimensions of display
-        VIEWPORT.physicalWidth = Gdx.graphics.getWidth();
-        VIEWPORT.physicalHeight = Gdx.graphics.getHeight();
-
-        //aspect ratio for current viewport
-        VIEWPORT.aspectRatio = (VIEWPORT.virtualWidth / VIEWPORT.virtualHeight);
-
-        //update viewport if there could be skewing
-        if (VIEWPORT.physicalWidth / VIEWPORT.physicalHeight >= VIEWPORT.aspectRatio) {
-            //Letterbox left and right
-            VIEWPORT.viewportWidth = VIEWPORT.viewportHeight * (VIEWPORT.physicalWidth / VIEWPORT.physicalHeight);
-            VIEWPORT.viewportHeight = VIEWPORT.virtualHeight;
-        } else {
-            //letterbox above and below
-            VIEWPORT.viewportWidth = VIEWPORT.virtualWidth;
-            VIEWPORT.viewportHeight = VIEWPORT.viewportWidth * (VIEWPORT.physicalHeight / VIEWPORT.physicalWidth);
-        }
-
-        LOGGER.debug("WorldRenderer: virtual: (" + VIEWPORT.virtualWidth + "," + VIEWPORT.virtualHeight + ")");
-        LOGGER.debug("WorldRenderer: viewport: (" + VIEWPORT.viewportWidth + "," + VIEWPORT.viewportHeight + ")");
-        LOGGER.debug("WorldRenderer: physical: (" + VIEWPORT.physicalWidth + "," + VIEWPORT.physicalHeight + ")");
-    }
-
-    @Override
-    public AudioObserver.AudioTypeEvent getMusicTheme() {
-        return musicTheme;
-    }
-
     @Override
     public void show() {
-        ProfileManager.getInstance().addObserver(mapManager);
-        ProfileManager.getInstance().addObserver(playerHUD);
-
         setGameState(GameState.LOADING);
-        Gdx.input.setInputProcessor(multiplexer);
+        Gdx.input.setInputProcessor(overworldStage);
 
         if (mapRenderer == null) {
-            mapRenderer = new OrthogonalTiledMapRenderer(mapManager.getCurrentTiledMap(), Map.UNIT_SCALE);
+            mapRenderer = new OrthogonalTiledMapRenderer(tiledMap, AbstractSongOfDeathLevel.MapUnit);
         }
     }
 
@@ -176,12 +129,13 @@ public class OverworldScreen extends AbstractScreen {
     }
 
     @Override
-    public void render(float delta) {
+    public void render(float delta) {/*
         if (gameState == GameState.PAUSED) {
             player.updateInput(delta);
             playerHUD.render(delta);
             return;
-        }
+        }*/
+        super.render(delta);
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
@@ -190,86 +144,89 @@ public class OverworldScreen extends AbstractScreen {
         mapRenderer.getBatch().enableBlending();
         mapRenderer.getBatch().setBlendFunction(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
 
-        if (mapManager.hasMapChanged()) {
-            mapRenderer.setMap(mapManager.getCurrentTiledMap());
-            player.sendMessage(Component.MESSAGE.INIT_START_POSITION, json.toJson(mapManager.getPlayerStartUnitScaled()));
+        if (delta == 0) {
+            //mapRenderer.setMap(mapManager.getCurrentTiledMap());
+            //player.sendMessage(Component.MESSAGE.INIT_START_POSITION, json.toJson(mapManager.getPlayerStartUnitScaled()));
 
-            camera.position.set(mapManager.getPlayerStartUnitScaled().x, mapManager.getPlayerStartUnitScaled().y, 0f);
+            camera.position.set(0, 0, 0f);
             camera.update();
 
-            playerHUD.updateEntityObservers();
+            //playerHUD.updateEntityObservers();
 
-            mapManager.setMapChanged(false);
+            //mapManager.setMapChanged(false);
         }
 
         mapRenderer.render();
-        mapManager.updateCurrentMapEntities(mapManager, mapRenderer.getBatch(), delta);
-        player.update(mapManager, mapRenderer.getBatch(), delta);
+        //mapManager.updateCurrentMapEntities(mapManager, mapRenderer.getBatch(), delta);
+        //player.update(mapManager, mapRenderer.getBatch(), delta);
 
         startX = camera.viewportWidth / 2;
         startY = camera.viewportHeight / 2;
-        levelWidth = mapManager.getCurrentTiledMap().getProperties().get("width", Integer.class);
-        levelHeight = mapManager.getCurrentTiledMap().getProperties().get("height", Integer.class);
-        endX = levelWidth * ResourceManager.SQUARE_TILE_SIZE * Map.UNIT_SCALE - startX * 2;
-        endY = levelHeight * ResourceManager.SQUARE_TILE_SIZE * Map.UNIT_SCALE - startY * 2;
-        CameraStyles.boundaries(camera, startX, startY, endX, endY);
 
-        playerHUD.render(delta);
+        levelWidth = tiledMap.getProperties().get("width", Integer.class);
+        levelHeight = tiledMap.getProperties().get("height", Integer.class);
 
-        musicTheme = MapFactory.getMapTable().get(mapManager.getCurrentMapType()).getMusicTheme();
-        AudioManager.getInstance().setCurrentMusic(ResourceManager.getMusicAsset(musicTheme.getValue()));
+        endX = levelWidth * AbstractSongOfDeathLevel.SquareTileSize * AbstractSongOfDeathLevel.MapUnit - startX * 2;
+        endY = levelHeight * AbstractSongOfDeathLevel.SquareTileSize * AbstractSongOfDeathLevel.MapUnit - startY * 2;
+        this.boundaries(camera, startX, startY, endX, endY);
+
+        //playerHUD.render(delta);
+
+        //musicTheme = MapFactory.getMapTable().get(mapManager.getCurrentMapType()).getMusicTheme();
+        //AudioManager.getInstance().setCurrentMusic(ResourceManager.getMusicAsset(musicTheme.getValue()));
     }
 
-    @Override
-    public void onNotify(String value, ComponentEvent event) {
-        switch (event) {
-            case START_BATTLE:
-                setGameState(GameState.SAVING);
-                setScreenWithTransition((BaseScreen) gdxGame.getScreen(), new BattleScreen(game, playerHUD, mapManager, resourceManager), new ArrayList<>());
-                PlayerInputComponent.clear();
-                break;
-            case OPTION_INPUT:
-                Image screenShot = new Image(ScreenUtils.getFrameBufferTexture());
-                game.setScreen(new OptionScreen(game, (BaseScreen) game.getScreen(), screenShot, resourceManager));
-                break;
-            default:
-                break;
+    public void boundaries(OrthographicCamera camera, float startX, float startY, float width, float height) {
+        Vector3 position = camera.position;
+
+        if(position.x < startX) {
+            position.x = startX;
         }
+        if(position.y < startY) {
+            position.y = startY;
+        }
+
+        if(position.x > startX + width) {
+            position.x = startX + width;
+        }
+        if(position.y > startY + height) {
+            position.y = startY + height;
+        }
+
+        camera.position.set(position);
+        camera.update();
     }
 
     @Override
     public void resize(int width, int height) {
-        setupViewport(15, 15);
-        camera.setToOrtho(false, VIEWPORT.viewportWidth, VIEWPORT.viewportHeight);
-        playerHUD.resize((int) VIEWPORT.physicalWidth, (int) VIEWPORT.physicalHeight);
+        //camera.setToOrtho(false, VIEWPORT.viewportWidth, VIEWPORT.viewportHeight);
+        //playerHUD.resize((int) VIEWPORT.physicalWidth, (int) VIEWPORT.physicalHeight);
     }
 
     @Override
     public void pause() {
         setGameState(GameState.SAVING);
-        playerHUD.pause();
+        //playerHUD.pause();
     }
 
     @Override
     public void resume() {
         setGameState(GameState.LOADING);
-        playerHUD.resume();
+        //playerHUD.resume();
     }
 
     @Override
     public void dispose() {
         super.dispose();
+        /*
         if (player != null) {
             player.unregisterObservers();
             player.dispose();
-        }
+        }*/
 
         if (mapRenderer != null) {
             mapRenderer.dispose();
         }
-
-        AudioManager.getInstance().dispose();
-        MapFactory.clearCache();
     }
 
     public enum GameState {
@@ -278,15 +235,5 @@ public class OverworldScreen extends AbstractScreen {
         RUNNING,
         PAUSED,
         GAME_OVER
-    }
-
-    public static class VIEWPORT {
-        private static float viewportWidth;
-        private static float viewportHeight;
-        private static float virtualWidth;
-        private static float virtualHeight;
-        private static float physicalWidth;
-        private static float physicalHeight;
-        private static float aspectRatio;
     }
 }
