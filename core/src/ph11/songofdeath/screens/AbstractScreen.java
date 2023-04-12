@@ -43,15 +43,15 @@ public class AbstractScreen implements Screen {
         return table;
     }
 
-    public Image createImage(Texture imageProper, float padX, float padY, Table table) {
+    public Image createImage(Texture imageProper, float padX, float padY, Table table, boolean newRow) {
         Image image = new Image(imageProper);
         image.setSize(64, 64);
         table.add(image).padLeft(padX).padTop(padY);
-        table.row();
+        if(newRow == true) {table.row();}
         return image;
     }
 
-    public Label createLabel(String labelText, int fontSize, float padX, float padY, Table table) {
+    public Label createLabel(String labelText, int fontSize, float padX, float padY, Table table, boolean newRow) {
         // generate the font
         FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
         parameter.size = fontSize;
@@ -64,11 +64,11 @@ public class AbstractScreen implements Screen {
         Label label = new Label(labelText, style);
 
         table.add(label).padLeft(padX).padTop(padY);
-        table.row();
+        if(newRow == true) {table.row();}
         return label;
     }
 
-    public TextButton createTextButton(String buttonText, float padX, float padY, Table table) {
+    public TextButton createTextButton(String buttonText, float padX, float padY, Table table, boolean newRow) {
         BitmapFont buttonFont = game.getResourceManager().bodyFontSized;
 
         Drawable buttonNormalTexture = game.getResourceManager().leDieuDeLaMerBareSkin.newDrawable("button");
@@ -81,11 +81,11 @@ public class AbstractScreen implements Screen {
         button.getLabel().setColor(this.game.getResourceManager().colorScheme.get("foreground"));
 
         table.add(button).padLeft(padX).padTop(padY);
-        table.row();
+        if(newRow == true) {table.row();}
         return button;
     }
 
-    public TextButton createTextButton(String buttonText, float width, float height, float padX, float padY, Table table) {
+    public TextButton createTextButton(String buttonText, float width, float height, float padX, float padY, Table table, boolean newRow) {
         BitmapFont buttonFont = game.getResourceManager().bodyFontSized;
 
         Drawable buttonNormalTexture = game.getResourceManager().leDieuDeLaMerBareSkin.newDrawable("button");
@@ -99,7 +99,7 @@ public class AbstractScreen implements Screen {
         button.getLabel().setColor(this.game.getResourceManager().colorScheme.get("foreground"));
 
         table.add(button).width(width).height(height).padLeft(padX).padTop(padY);
-        table.row();
+        if(newRow == true) {table.row();}
         return button;
     }
 

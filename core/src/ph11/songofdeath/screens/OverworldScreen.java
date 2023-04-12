@@ -77,7 +77,7 @@ public class OverworldScreen extends AbstractScreen {
         // the old way had a way to get it out of a save state
         // for now, we're just going to use a straight one
         player = game.getPlayerRepresentation();
-        createImage(player.image, 1200, 50, overworldTable);
+        createImage(player.image, 1200, 50, overworldTable,true);
 
         multiplexer = new InputMultiplexer();
         Gdx.input.setInputProcessor(overworldStage);
