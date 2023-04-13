@@ -16,7 +16,7 @@ public class OptionsScreen extends AbstractScreen{
     private final Stage OptionStage;
     private final Table OptionTable;
     private String bgm = "1", sfx = "1"; //initialize the bgm and sfx volume
-    private Actor lowerBGM, higherBGM, lowerSFX, higherSFX;
+    private Actor lowerBGM, higherBGM, lowerSFX, higherSFX, backButton;
     public OptionsScreen(final SongOfDeath game){
         super(game);
 
@@ -24,7 +24,7 @@ public class OptionsScreen extends AbstractScreen{
         OptionTable = createTable();
 
         //initialize the upper text
-        createLabel("Options", 120, 385, -100, OptionTable, true);
+        createLabel("Options", 120, 385, -50, OptionTable, true);
         createLabel("---------------", 50, 385,-20,OptionTable, true);
 
         createLabel("BGM", 100,-300,100,OptionTable, false);
@@ -57,12 +57,19 @@ public class OptionsScreen extends AbstractScreen{
                 SFX.setText(sfx);
             }
         });
-        higherSFX = createTextButton(">", 100, 100, 5, 30, OptionTable,false);
+        higherSFX = createTextButton(">", 100, 100, 5, 30, OptionTable,true);
         higherSFX.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent even, float x, float y) {
                 changeSFX(true);
                 SFX.setText(sfx);
+            }
+        });
+        backButton = createTextButton("Back",-600,0,OptionTable,false);
+        backButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent even, float x, float y) {
+                game.changeScreen(SongOfDeath.ScreenEnum.MainMenu);
             }
         });
     }

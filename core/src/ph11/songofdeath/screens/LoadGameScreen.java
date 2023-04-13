@@ -1,13 +1,17 @@
 package ph11.songofdeath.screens;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import ph11.songofdeath.SongOfDeath;
 
 public class LoadGameScreen extends AbstractScreen {
     private final Table savesTable;
     private final Stage savesStage;
+    private Actor backButton;
 
     public LoadGameScreen(final SongOfDeath game) {
         super(game);
@@ -19,7 +23,13 @@ public class LoadGameScreen extends AbstractScreen {
         createTextButton("Work in Progress", 1000,120,0,30,savesTable,true);
         createTextButton("Work in Progress", 1000,120,0,0,savesTable,true);
         createTextButton("Work in Progress", 1000,120,0,0,savesTable,true);
-        createTextButton("Work in Progress", 1000,120,0,0,savesTable,true);
+        backButton = createTextButton("Back",-900,0,savesTable,true);
+        backButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent even, float x, float y) {
+                game.changeScreen(SongOfDeath.ScreenEnum.MainMenu);
+            }
+        });
     }
     @Override
     public void show() {

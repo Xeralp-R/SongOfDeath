@@ -30,7 +30,7 @@ public class MainMenuScreen extends AbstractScreen {
             @Override
             public void clicked(InputEvent even, float x, float y) {
                 //setScreenWithTransition((BaseScreen) gdxGame.getScreen(), new MenuNewGameScreen(gdxGame, (BaseScreen) gdxGame.getScreen(), resourceManager), new ArrayList<>());
-                game.changeScreen(SongOfDeath.ScreenEnum.CharSelect);
+                game.changeScreen(SongOfDeath.ScreenEnum.Overworld);
             }
         });
 
