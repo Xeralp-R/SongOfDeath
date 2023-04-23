@@ -2,19 +2,14 @@ package ph11.songofdeath.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
-import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.Json;
-import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.math.Vector3;
 
 /*
@@ -34,9 +29,7 @@ import com.gdx.game.map.MapFactory;
 import com.gdx.game.map.MapManager;
 import com.gdx.game.profile.ProfileManager;*/
 import ph11.songofdeath.overworld.AbstractSongOfDeathLevel;
-import ph11.songofdeath.overworld.OverworldRepresentation;
-
-import java.util.ArrayList;
+import ph11.songofdeath.entity.overworldrepresentation.OverworldRepresentation;
 
 public class OverworldScreen extends AbstractScreen {
 
@@ -46,8 +39,8 @@ public class OverworldScreen extends AbstractScreen {
     protected TiledMap tiledMap;
     protected OrthographicCamera camera;
     private Json json;
-    private AbstractSongOfDeathLevel game;
-    private InputMultiplexer multiplexer;
+    private AbstractSongOfDeathLevel level;
+    private InputMultiplexer inputMultiplexer;
     private OverworldRepresentation player;
     private float startX;
     private float startY;
@@ -59,14 +52,15 @@ public class OverworldScreen extends AbstractScreen {
     private final Stage overworldStage;
     private final Table overworldTable;
     public RectangleMapObject playerBox;
+    boolean firstLoad;
 
-    public OverworldScreen(AbstractSongOfDeathLevel game, TiledMap map) {
-        super(game);
-        this.game = game;
+    public OverworldScreen(AbstractSongOfDeathLevel level, TiledMap map) {
+        super(level);
+        this.level = level;
         json = new Json();
         this.tiledMap = map;
 
-        overworldStage = new Stage(super.viewport, game.getBatch());
+        overworldStage = new Stage(super.viewport, level.getBatch());
         overworldTable = createTable();
 
         setGameState(GameState.RUNNING);
@@ -76,20 +70,13 @@ public class OverworldScreen extends AbstractScreen {
 
         // the old way had a way to get it out of a save state
         // for now, we're just going to use a straight one
-        player = game.getPlayerRepresentation();
-        createImage(player.image, 1200, 50, overworldTable);
+        //player = game.getPlayerRepresentation();
+        //createImage(player.image, 1200, 50, overworldTable);
 
-        multiplexer = new InputMultiplexer();
-        Gdx.input.setInputProcessor(overworldStage);
-
-        playerBox = new RectangleMapObject(3500, 500, 64, 64);
-        playerBox.setColor(Color.WHITE);
-        playerBox.setVisible(true);
-        playerBox.setOpacity(1);
-
-        MapLayer positiveLayer = new MapLayer();
-        positiveLayer.getObjects().add(playerBox);
-        tiledMap.getLayers().add(positiveLayer);
+        this.inputMultiplexer = new InputMultiplexer();
+        //this.inputMultiplexer.addProcessor(overworldStage);
+        Gdx.input.setInputProcessor(this.inputMultiplexer);
+        this.firstLoad = true;
     }
 
     public static GameState getGameState() {
@@ -129,9 +116,8 @@ public class OverworldScreen extends AbstractScreen {
 
     @Override
     public void show() {
-        overworldStage.addActor(overworldTable);
         setGameState(GameState.LOADING);
-        Gdx.input.setInputProcessor(overworldStage);
+        Gdx.input.setInputProcessor(this.inputMultiplexer);
 
         if (mapRenderer == null) {
             mapRenderer = new OrthogonalTiledMapRenderer(tiledMap, AbstractSongOfDeathLevel.MapUnit);
@@ -154,6 +140,7 @@ public class OverworldScreen extends AbstractScreen {
             playerHUD.render(delta);
             return;
         }*/
+
         super.render(delta);
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
@@ -164,17 +151,17 @@ public class OverworldScreen extends AbstractScreen {
         mapRenderer.getBatch().setBlendFunction(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
 
 
-        //if (delta == 0) {
+        if (firstLoad) {
             //mapRenderer.setMap(mapManager.getCurrentTiledMap());
             //player.sendMessage(Component.MESSAGE.INIT_START_POSITION, json.toJson(mapManager.getPlayerStartUnitScaled()));
 
-        camera.position.set(1500, 500, 0f);
-        camera.update();
+            camera.position.set(level.getPlayerStartPosition(), 0f);
+            camera.update();
 
             //playerHUD.updateEntityObservers();
 
-            //mapManager.setMapChanged(false);
-        //}
+            this.firstLoad = false;
+        }
 
         mapRenderer.render();
         //mapManager.updateCurrentMapEntities(mapManager, mapRenderer.getBatch(), delta);

@@ -6,7 +6,9 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
+import com.badlogic.gdx.math.Vector2;
 import ph11.songofdeath.SongOfDeath;
+import ph11.songofdeath.entity.overworldrepresentation.OverworldRepresentation;
 import ph11.songofdeath.globalmanagers.GlobalResourceManager;
 import ph11.songofdeath.screens.OverworldScreen;
 
@@ -17,6 +19,7 @@ public class SongOfDeathLevel1 extends AbstractSongOfDeathLevel {
     public final TiledMap level1;
     // TODO: GET IT OUT OF THE MAIN CLASS!
     private OverworldScreen overworldScreen;
+    private Vector2 playerStartPosition = new Vector2(1500, 500);
 
     public SongOfDeathLevel1(SongOfDeath game) {
         super(game);
@@ -49,5 +52,10 @@ public class SongOfDeathLevel1 extends AbstractSongOfDeathLevel {
     @Override
     public SpriteBatch getBatch() {
         return batch;
+    }
+
+    @Override
+    public Vector2 getPlayerStartPosition() {
+        return playerStartPosition;
     }
 }
