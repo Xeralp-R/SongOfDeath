@@ -23,9 +23,9 @@ public class MainMenuScreen extends AbstractScreen {
         //handleBackground();
 
         // title text
-        createLabel("Song of Death", 120, 0, 0, menuTable);
+        createLabel("Song of Death", 120, 0, 0, menuTable, true);
 
-        Actor newButton = createTextButton("New Game", 300, 110, 0, 30, menuTable);
+        Actor newButton = createTextButton("New Game", 300, 110, 0, 30, menuTable, true);
         newButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent even, float x, float y) {
@@ -34,16 +34,16 @@ public class MainMenuScreen extends AbstractScreen {
             }
         });
 
-        Actor loadButton = createTextButton("Load Game", 300, 110, 0, 10, menuTable);
+        Actor loadButton = createTextButton("Load Game", 300, 110, 0, 10, menuTable,true);
         loadButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent even, float x, float y) {
                 //setScreenWithTransition((BaseScreen) gdxGame.getScreen(), new MenuLoadGameScreen(gdxGame, (BaseScreen) gdxGame.getScreen(), resourceManager), new ArrayList<>());
-                game.changeScreen(SongOfDeath.ScreenEnum.Overworld);
+                game.changeScreen(SongOfDeath.ScreenEnum.LoadGame);
             }
         });
 
-        Actor optionButton = createTextButton("Options", 300, 110, 0, 10, menuTable);
+        Actor optionButton = createTextButton("Options", 300, 110, 0, 10, menuTable,true);
         optionButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent even, float x, float y) {
@@ -52,7 +52,7 @@ public class MainMenuScreen extends AbstractScreen {
             }
         });
 
-        Actor exitButton = createTextButton("Exit", 300, 110, 0, 10, menuTable);
+        Actor exitButton = createTextButton("Exit", 300, 110, 0, 10, menuTable,true);
         exitButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent even, float x, float y) {

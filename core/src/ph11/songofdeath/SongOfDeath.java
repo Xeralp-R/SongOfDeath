@@ -12,10 +12,13 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import ph11.songofdeath.globalmanagers.GlobalResourceManager;
 import ph11.songofdeath.overworld.SongOfDeathLevel1;
+import ph11.songofdeath.screens.LoadGameScreen;
 import ph11.songofdeath.screens.MainMenuScreen;
+import ph11.songofdeath.screens.OptionsScreen;
 
 public class SongOfDeath extends Game implements AbstractSongOfDeath {
 	public enum ScreenEnum {
+		LoadGame,
 		MainMenu,
 		Options,
 		Overworld,
@@ -24,17 +27,21 @@ public class SongOfDeath extends Game implements AbstractSongOfDeath {
 	private SpriteBatch batch;
 	public GlobalResourceManager resourceManager;
 	private MainMenuScreen mainMenuScreen;
-
+	private OptionsScreen OptionsScreen;
+	private LoadGameScreen LoadGameScreen;
 	SongOfDeathLevel1 level1;
 
 	public void changeScreen(ScreenEnum screen_type) {
 		// TODO: add transitions
 		switch (screen_type) {
+			case LoadGame:
+				this.setScreen(this.LoadGameScreen);
+				break;
 			case MainMenu:
 				this.setScreen(this.mainMenuScreen);
 				break;
 			case Options:
-				//this.setScreen(this.OptionsScreen);
+				this.setScreen(this.OptionsScreen);
 				break;
 			case Battle:
 				//this.setScreen(this.BattleScreen);
@@ -50,6 +57,8 @@ public class SongOfDeath extends Game implements AbstractSongOfDeath {
 		this.resourceManager = GlobalResourceManager.get();
 
 		mainMenuScreen = new MainMenuScreen(this);
+		OptionsScreen = new OptionsScreen(this);
+		LoadGameScreen = new LoadGameScreen(this);
 
 		this.setScreen(mainMenuScreen);
 	}
