@@ -15,7 +15,7 @@ public class PlayerInputProcessor extends InputProcessor {
 
     private boolean interact;
     protected OverworldRepresentation.Direction currentDirection = null;
-    Json converter;
+    Json converter = new Json();
 
     protected enum Keys {
         LEFT, RIGHT, UP, DOWN, QUIT, INTERACT, OPTION

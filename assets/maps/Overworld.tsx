@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<tileset version="1.9" tiledversion="1.9.2" name="Overworld" tilewidth="64" tileheight="64" tilecount="27" columns="0">
+<tileset version="1.9" tiledversion="1.9.2" name="Overworld" tilewidth="64" tileheight="64" tilecount="43" columns="0">
  <grid orientation="orthogonal" width="1" height="1"/>
  <tile id="49">
   <image width="64" height="64" source="x64/Flower1-1.png-1.png (1).png"/>
@@ -81,5 +81,53 @@
  </tile>
  <tile id="56">
   <image width="64" height="64" source="x64/X.png"/>
+ </tile>
+ <tile id="65">
+  <image width="64" height="64" source="x64/Cliff Corner Bottom-Left.png"/>
+ </tile>
+ <tile id="66">
+  <image width="64" height="64" source="x64/Cliff Corner Bottom-Right.png"/>
+ </tile>
+ <tile id="67">
+  <image width="64" height="64" source="x64/Cliff Corner Top-Left.png"/>
+ </tile>
+ <tile id="68">
+  <image width="64" height="64" source="x64/Cliff Corner Top-Right.png"/>
+ </tile>
+ <tile id="69">
+  <image width="64" height="64" source="x64/Cliff Side Middle-Left.png"/>
+ </tile>
+ <tile id="70">
+  <image width="64" height="64" source="x64/Cliff Side Middle-Right.png"/>
+ </tile>
+ <tile id="71">
+  <image width="64" height="64" source="x64/Cliff Top-Left.png"/>
+ </tile>
+ <tile id="72">
+  <image width="64" height="64" source="x64/Cliff Top-Right.png"/>
+ </tile>
+ <tile id="73">
+  <image width="64" height="64" source="x64/Solid Grass Cliff.png"/>
+ </tile>
+ <tile id="74">
+  <image width="64" height="64" source="x64/Cliff TopCorner-Right.png"/>
+ </tile>
+ <tile id="75">
+  <image width="64" height="64" source="x64/Cliff TopCorner-Left.png"/>
+ </tile>
+ <tile id="79">
+  <image width="64" height="64" source="x64/Inverted Cliff Middle.png"/>
+ </tile>
+ <tile id="80">
+  <image width="64" height="64" source="x64/Inverted Cliff Corner-Left.png"/>
+ </tile>
+ <tile id="81">
+  <image width="64" height="64" source="x64/Inverted Cliff Corner-Right.png"/>
+ </tile>
+ <tile id="82">
+  <image width="64" height="64" source="x64/Inverted Cliff Corner2-Left.png"/>
+ </tile>
+ <tile id="83">
+  <image width="64" height="64" source="x64/Inverted Cliff Corner2-Right.png"/>
  </tile>
 </tileset>

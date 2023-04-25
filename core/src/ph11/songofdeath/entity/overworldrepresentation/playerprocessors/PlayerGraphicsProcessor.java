@@ -12,7 +12,7 @@ public class PlayerGraphicsProcessor extends GraphicsProcessor {
 
     public PlayerGraphicsProcessor() {
         this.previousPosition = new Vector2(0,0);
-        super.loadFrame("overworldentitities/player/temp-character.png");
+        super.loadFrame("overworldentities/player/temp-character.png");
     }
 
     @Override
@@ -25,7 +25,7 @@ public class PlayerGraphicsProcessor extends GraphicsProcessor {
             this.previousPosition = super.currentPosition.cpy();
         }
 
-        Camera camera = screen.getDefaultCamera();
+        Camera camera = screen.getCamera();
         camera.position.set(currentPosition.x, currentPosition.y, 0f);
         camera.update();
 
@@ -33,6 +33,8 @@ public class PlayerGraphicsProcessor extends GraphicsProcessor {
         batch.begin();
         batch.draw(super.currentFrame, currentPosition.x, currentPosition.y, 1, 1);
         batch.end();
+
+
     }
 
     @Override

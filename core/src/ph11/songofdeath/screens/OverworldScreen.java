@@ -30,10 +30,20 @@ import com.gdx.game.map.Map;
 import com.gdx.game.map.MapFactory;
 import com.gdx.game.map.MapManager;
 import com.gdx.game.profile.ProfileManager;*/
+import ph11.songofdeath.entity.overworldrepresentation.ProcessorInterface;
 import ph11.songofdeath.overworld.AbstractSongOfDeathLevel;
 import ph11.songofdeath.entity.overworldrepresentation.OverworldRepresentation;
 
 public class OverworldScreen extends AbstractScreen {
+    public static class VIEWPORT {
+        private static float viewportWidth;
+        private static float viewportHeight;
+        private static float virtualWidth;
+        private static float virtualHeight;
+        private static float physicalWidth;
+        private static float physicalHeight;
+        private static float aspectRatio;
+    }
 
     private static GameState gameState;
     protected OrthogonalTiledMapRenderer mapRenderer = null;
@@ -52,7 +62,6 @@ public class OverworldScreen extends AbstractScreen {
     private float endY;
 
     private final Stage overworldStage;
-    private final Table overworldTable;
     public RectangleMapObject playerBox;
     boolean firstLoad;
 
@@ -63,20 +72,22 @@ public class OverworldScreen extends AbstractScreen {
         this.tiledMap = map;
 
         overworldStage = new Stage(super.viewport, level.getBatch());
-        overworldTable = createTable();
 
         setGameState(GameState.RUNNING);
+        setupViewport(15, 15);
 
         // for now...
-        camera = super.defaultCamera;
+        camera = new OrthographicCamera();
+        camera.setToOrtho(false, VIEWPORT.viewportWidth, VIEWPORT.viewportHeight);
 
         // the old way had a way to get it out of a save state
         // for now, we're just going to use a straight one
-        //player = game.getPlayerRepresentation();
+        player = level.getPlayerRepresentation();
         //createImage(player.image, 1200, 50, overworldTable);
 
         this.inputMultiplexer = new InputMultiplexer();
-        //this.inputMultiplexer.addProcessor(overworldStage);
+        this.inputMultiplexer.addProcessor(overworldStage);
+        this.inputMultiplexer.addProcessor(player.getInputProcessor());
         Gdx.input.setInputProcessor(this.inputMultiplexer);
         this.firstLoad = true;
     }
@@ -155,7 +166,7 @@ public class OverworldScreen extends AbstractScreen {
 
         if (firstLoad) {
             //mapRenderer.setMap(mapManager.getCurrentTiledMap());
-            //player.sendMessage(Component.MESSAGE.INIT_START_POSITION, json.toJson(mapManager.getPlayerStartUnitScaled()));
+            player.sendMessage(ProcessorInterface.MessageType.INIT_START_POSITION, json.toJson(level.getPlayerStartPositionScaled()));
 
             camera.position.set(level.getPlayerStartPosition(), 0f);
             camera.update();
@@ -164,8 +175,8 @@ public class OverworldScreen extends AbstractScreen {
 
             this.firstLoad = false;
         }
-
         mapRenderer.render();
+        level.renderEntities(this, delta);
         //mapManager.updateCurrentMapEntities(mapManager, mapRenderer.getBatch(), delta);
         //player.update(mapManager, mapRenderer.getBatch(), delta);
 
@@ -178,9 +189,6 @@ public class OverworldScreen extends AbstractScreen {
         endX = levelWidth * AbstractSongOfDeathLevel.SquareTileSize * AbstractSongOfDeathLevel.UNIT_SCALE - startX * 2;
         endY = levelHeight * AbstractSongOfDeathLevel.SquareTileSize * AbstractSongOfDeathLevel.UNIT_SCALE - startY * 2;
         this.boundaries(camera, startX, startY, endX, endY);
-
-        overworldStage.act(delta);
-        overworldStage.draw();
 
         //playerHUD.render(delta);
 
@@ -239,7 +247,6 @@ public class OverworldScreen extends AbstractScreen {
         if (mapRenderer != null) {
             mapRenderer.dispose();
         }
-        overworldTable.remove();
     }
 
     public enum GameState {
@@ -250,8 +257,41 @@ public class OverworldScreen extends AbstractScreen {
         GAME_OVER
     }
 
+    private static void setupViewport(int width, int height) {
+        //Make the viewport a percentage of the total display area
+        VIEWPORT.virtualWidth = width;
+        VIEWPORT.virtualHeight = height;
+
+        //Current viewport dimensions
+        VIEWPORT.viewportWidth = VIEWPORT.virtualWidth;
+        VIEWPORT.viewportHeight = VIEWPORT.virtualHeight;
+
+        //pixel dimensions of display
+        VIEWPORT.physicalWidth = Gdx.graphics.getWidth();
+        VIEWPORT.physicalHeight = Gdx.graphics.getHeight();
+
+        //aspect ratio for current viewport
+        VIEWPORT.aspectRatio = (VIEWPORT.virtualWidth / VIEWPORT.virtualHeight);
+
+        //update viewport if there could be skewing
+        if (VIEWPORT.physicalWidth / VIEWPORT.physicalHeight >= VIEWPORT.aspectRatio) {
+            //Letterbox left and right
+            VIEWPORT.viewportWidth = VIEWPORT.viewportHeight * (VIEWPORT.physicalWidth/VIEWPORT.physicalHeight);
+            VIEWPORT.viewportHeight = VIEWPORT.virtualHeight;
+        } else {
+            //letterbox above and below
+            VIEWPORT.viewportWidth = VIEWPORT.virtualWidth;
+            VIEWPORT.viewportHeight = VIEWPORT.viewportWidth * (VIEWPORT.physicalHeight/VIEWPORT.physicalWidth);
+        }
+
+        //LOGGER.debug("WorldRenderer: virtual: ({},{})", VIEWPORT.virtualWidth, VIEWPORT.virtualHeight);
+        //LOGGER.debug("WorldRenderer: viewport: ({},{})", VIEWPORT.viewportWidth, VIEWPORT.viewportHeight);
+        //LOGGER.debug("WorldRenderer: physical: ({},{})", VIEWPORT.physicalWidth, VIEWPORT.physicalHeight);
+    }
+
     public AbstractSongOfDeathLevel getLevel() {
         return this.level;
     }
     public Batch getBatch() { return mapRenderer.getBatch(); }
+    public OrthographicCamera getCamera() { return this.camera; }
 }

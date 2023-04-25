@@ -33,13 +33,13 @@ public class PlayerPhysicsProcessor extends PhysicsProcessor {
         this.checkPortalLayerActivation(level);
 
         boolean hasCollidedMapBoundaries = super.checkCollisionWithMapLayer(entity, level);
-        boolean hasCollidedMapEntities = super.checkCollisionWithMapEntities(entity, level);
+        boolean hasCollidedMapEntities = false; //super.checkCollisionWithMapEntities(entity, level);
         boolean isWalking = (state == OverworldRepresentation.State.WALKING);
-        if (!hasCollidedMapEntities && !hasCollidedMapEntities && isWalking) {
+        if (!hasCollidedMapBoundaries && !hasCollidedMapEntities && isWalking) {
             super.setNextPositionToCurrent(entity);
 
-            screen.getDefaultCamera().position.set(currentEntityPosition, 0f);
-            screen.getDefaultCamera().update();
+            screen.getCamera().position.set(currentEntityPosition, 0f);
+            screen.getCamera().update();
         }
         else {
             super.updateBoundingBoxPosition(currentEntityPosition);

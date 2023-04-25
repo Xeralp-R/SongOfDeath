@@ -1,5 +1,6 @@
 package ph11.songofdeath.globalmanagers;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.assets.loaders.TextureLoader;
 import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
@@ -71,12 +72,12 @@ public class GlobalResourceManager {
         laMereDeLaTerreBareSkin.addRegions(laMereDeLaTerreAtlas);
 
         // FONT
-        this.titleFontGenerator = new FreeTypeFontGenerator(new FileHandle("fonts/AncientModernTales.ttf"));
+        this.titleFontGenerator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/AncientModernTales.ttf"));
         FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
         parameter.size = 108;
         this.titleFontSized = this.titleFontGenerator.generateFont(parameter);
 
-        this.bodyFontGenerator = new FreeTypeFontGenerator(new FileHandle("fonts/PixeloidSans.ttf"));
+        this.bodyFontGenerator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/PixeloidSans.ttf"));
         // just reusing the same paramter
         parameter.size = 32;
         this.bodyFontSized = this.bodyFontGenerator.generateFont(parameter);

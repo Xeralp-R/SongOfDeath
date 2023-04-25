@@ -164,7 +164,7 @@ abstract public class PhysicsProcessor implements ProcessorInterface {
      */
     protected boolean checkCollisionWithMapEntities(OverworldRepresentation entity, AbstractSongOfDeathLevel level) {
         Array<OverworldRepresentation> entities = new Array<>();
-        entities.addAll(level.getEntities());
+        entities.addAll(level.getEntities()); // not quite functional
         boolean collision = false;
 
         for(OverworldRepresentation testEntity : entities) {
