@@ -1,6 +1,8 @@
 package ph11.songofdeath.globalmanagers;
 
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.assets.loaders.TextureLoader;
+import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
@@ -44,7 +46,9 @@ public class GlobalResourceManager {
     // Color!
     public final ObjectMap<String, Color> colorScheme;
 
+    // Utility!
     private static final AssetManager assetManager = new AssetManager();
+    private static InternalFileHandleResolver filePathResolver =  new InternalFileHandleResolver();
 
     private GlobalResourceManager() {
         // Atlas!
@@ -92,5 +96,38 @@ public class GlobalResourceManager {
         leDieuDeLaMerAtlas.dispose();
 
         titleFontGenerator.dispose();
+    }
+
+    public static void loadTextureAsset(String textureFilenamePath) {
+        if (textureFilenamePath == null || textureFilenamePath.isEmpty()) {
+            return;
+        }
+
+        if (assetManager.isLoaded(textureFilenamePath)) {
+            return;
+        }
+
+        //load asset
+        if (filePathResolver.resolve(textureFilenamePath).exists()) {
+            assetManager.setLoader(Texture.class, new TextureLoader(filePathResolver));
+            assetManager.load(textureFilenamePath, Texture.class);
+            //Until we add loading screen, just block until we load the map
+            assetManager.finishLoadingAsset(textureFilenamePath);
+        } else {
+            //LOGGER.debug("Texture doesn't exist!: {}", textureFilenamePath);
+        }
+    }
+
+    public static Texture getTextureAsset(String textureFilenamePath) {
+        Texture texture = null;
+
+        // once the asset manager is done loading
+        if (assetManager.isLoaded(textureFilenamePath)) {
+            texture = assetManager.get(textureFilenamePath,Texture.class);
+        } else {
+            //LOGGER.debug("Texture is not loaded: {}", textureFilenamePath);
+        }
+
+        return texture;
     }
 }
