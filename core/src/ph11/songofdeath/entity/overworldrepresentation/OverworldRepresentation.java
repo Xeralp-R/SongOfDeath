@@ -1,8 +1,10 @@
 package ph11.songofdeath.entity.overworldrepresentation;
 
 import com.badlogic.gdx.assets.AssetManager;
-import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Array;
+import ph11.songofdeath.entity.overworldrepresentation.abstractprocessors.InputProcessor;
+import ph11.songofdeath.entity.overworldrepresentation.abstractprocessors.PhysicsProcessor;
 import ph11.songofdeath.screens.OverworldScreen;
 
 public class OverworldRepresentation {
@@ -28,6 +30,10 @@ public class OverworldRepresentation {
     final private PhysicsProcessor physicsProcessor;
     final private GraphicsProcessor graphicsProcessor;
 
+    // note: these values have not been checked
+    public static final int FRAME_WIDTH = 16;
+    public static final int FRAME_HEIGHT = 16;
+
     public OverworldRepresentation(InputProcessor inputProcessor, PhysicsProcessor physicsProcessor, GraphicsProcessor graphicsProcessor) {
         this.inputProcessor = inputProcessor;
         this.graphicsProcessor = graphicsProcessor;
@@ -47,5 +53,9 @@ public class OverworldRepresentation {
         inputProcessor.render(screen, this, delta);
         physicsProcessor.render(screen, this, delta);
         graphicsProcessor.render(screen, this, delta);
+    }
+
+    public Rectangle getBoundingBox() {
+        return physicsProcessor.boundingBox;
     }
 }

@@ -120,7 +120,7 @@ public class OverworldScreen extends AbstractScreen {
         Gdx.input.setInputProcessor(this.inputMultiplexer);
 
         if (mapRenderer == null) {
-            mapRenderer = new OrthogonalTiledMapRenderer(tiledMap, AbstractSongOfDeathLevel.MapUnit);
+            mapRenderer = new OrthogonalTiledMapRenderer(tiledMap, AbstractSongOfDeathLevel.UNIT_SCALE);
         }
     }
 
@@ -173,8 +173,8 @@ public class OverworldScreen extends AbstractScreen {
         levelWidth = tiledMap.getProperties().get("width", Integer.class);
         levelHeight = tiledMap.getProperties().get("height", Integer.class);
 
-        endX = levelWidth * AbstractSongOfDeathLevel.SquareTileSize * AbstractSongOfDeathLevel.MapUnit - startX * 2;
-        endY = levelHeight * AbstractSongOfDeathLevel.SquareTileSize * AbstractSongOfDeathLevel.MapUnit - startY * 2;
+        endX = levelWidth * AbstractSongOfDeathLevel.SquareTileSize * AbstractSongOfDeathLevel.UNIT_SCALE - startX * 2;
+        endY = levelHeight * AbstractSongOfDeathLevel.SquareTileSize * AbstractSongOfDeathLevel.UNIT_SCALE - startY * 2;
         this.boundaries(camera, startX, startY, endX, endY);
 
         overworldStage.act(delta);
@@ -246,5 +246,9 @@ public class OverworldScreen extends AbstractScreen {
         RUNNING,
         PAUSED,
         GAME_OVER
+    }
+
+    public AbstractSongOfDeathLevel getLevel() {
+        return this.level;
     }
 }

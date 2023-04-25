@@ -1,15 +1,18 @@
-package ph11.songofdeath.entity.overworldrepresentation;
+package ph11.songofdeath.entity.overworldrepresentation.playerprocessors;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.utils.Json;
+import ph11.songofdeath.entity.overworldrepresentation.abstractprocessors.InputProcessor;
+import ph11.songofdeath.entity.overworldrepresentation.OverworldRepresentation;
+import ph11.songofdeath.entity.overworldrepresentation.ProcessorInterface;
 import ph11.songofdeath.screens.OverworldScreen;
 
 import java.util.HashMap;
 import java.util.Map;
-import com.badlogic.gdx.utils.Json;
 
+public class PlayerInputProcessor extends InputProcessor {
 
-public class InputProcessor implements ProcessorInterface, com.badlogic.gdx.InputProcessor {
     private boolean interact;
     protected OverworldRepresentation.Direction currentDirection = null;
     Json converter;
@@ -30,38 +33,22 @@ public class InputProcessor implements ProcessorInterface, com.badlogic.gdx.Inpu
     }
 
     @Override
-    public void receiveMessage(MessageType type, String message) {
-        switch (type) {
-            case CURRENT_DIRECTION:
-                this.currentDirection = converter.fromJson(OverworldRepresentation.Direction.class, message);
-                break;
-
-            case OPTION_INPUT:
-                //notify("", ComponentObserver.ComponentEvent.OPTION_INPUT);
-                break;
-
-            default:
-                break;
-        }
-    }
-
-    @Override
     public void render(OverworldScreen screen, OverworldRepresentation entity, float delta) {
         if (keyStatusMap.get(Keys.LEFT)) {
-            entity.sendMessage(MessageType.CURRENT_STATE, converter.toJson(OverworldRepresentation.State.WALKING));
-            entity.sendMessage(MessageType.CURRENT_DIRECTION, converter.toJson(OverworldRepresentation.Direction.LEFT));
+            entity.sendMessage(ProcessorInterface.MessageType.CURRENT_STATE, converter.toJson(OverworldRepresentation.State.WALKING));
+            entity.sendMessage(ProcessorInterface.MessageType.CURRENT_DIRECTION, converter.toJson(OverworldRepresentation.Direction.LEFT));
         }
         else if(keyStatusMap.get(Keys.RIGHT)) {
-            entity.sendMessage(MessageType.CURRENT_STATE, converter.toJson(OverworldRepresentation.State.WALKING));
-            entity.sendMessage(MessageType.CURRENT_DIRECTION, converter.toJson(OverworldRepresentation.Direction.RIGHT));
+            entity.sendMessage(ProcessorInterface.MessageType.CURRENT_STATE, converter.toJson(OverworldRepresentation.State.WALKING));
+            entity.sendMessage(ProcessorInterface.MessageType.CURRENT_DIRECTION, converter.toJson(OverworldRepresentation.Direction.RIGHT));
         }
         else if(keyStatusMap.get(Keys.UP)) {
-            entity.sendMessage(MessageType.CURRENT_STATE, converter.toJson(OverworldRepresentation.State.WALKING));
-            entity.sendMessage(MessageType.CURRENT_DIRECTION, converter.toJson(OverworldRepresentation.Direction.UP));
+            entity.sendMessage(ProcessorInterface.MessageType.CURRENT_STATE, converter.toJson(OverworldRepresentation.State.WALKING));
+            entity.sendMessage(ProcessorInterface.MessageType.CURRENT_DIRECTION, converter.toJson(OverworldRepresentation.Direction.UP));
         }
         else if(keyStatusMap.get(Keys.DOWN)) {
-            entity.sendMessage(MessageType.CURRENT_STATE, converter.toJson(OverworldRepresentation.State.WALKING));
-            entity.sendMessage(MessageType.CURRENT_DIRECTION, converter.toJson(OverworldRepresentation.Direction.DOWN));
+            entity.sendMessage(ProcessorInterface.MessageType.CURRENT_STATE, converter.toJson(OverworldRepresentation.State.WALKING));
+            entity.sendMessage(ProcessorInterface.MessageType.CURRENT_DIRECTION, converter.toJson(OverworldRepresentation.Direction.DOWN));
         }
         else if(keyStatusMap.get(Keys.QUIT)) {
             //quitReleased();
@@ -72,13 +59,13 @@ public class InputProcessor implements ProcessorInterface, com.badlogic.gdx.Inpu
             interact = true;
         }
         else if(keyStatusMap.get(Keys.OPTION)) {
-            entity.sendMessage(MessageType.OPTION_INPUT, "");
+            entity.sendMessage(ProcessorInterface.MessageType.OPTION_INPUT, "");
             //optionReleased();
         }
         else {
-            entity.sendMessage(MessageType.CURRENT_STATE, converter.toJson(OverworldRepresentation.State.IDLE));
+            entity.sendMessage(ProcessorInterface.MessageType.CURRENT_STATE, converter.toJson(OverworldRepresentation.State.IDLE));
             if(currentDirection == null) {
-                entity.sendMessage(MessageType.CURRENT_DIRECTION, converter.toJson(OverworldRepresentation.Direction.DOWN));
+                entity.sendMessage(ProcessorInterface.MessageType.CURRENT_DIRECTION, converter.toJson(OverworldRepresentation.Direction.DOWN));
             }
         }
     }
@@ -204,5 +191,21 @@ public class InputProcessor implements ProcessorInterface, com.badlogic.gdx.Inpu
         keyStatusMap.put(Keys.DOWN, false);
         keyStatusMap.put(Keys.QUIT, false);
         keyStatusMap.put(Keys.OPTION, false);
+    }
+
+    @Override
+    public void receiveMessage(ProcessorInterface.MessageType type, String message) {
+        switch (type) {
+            case CURRENT_DIRECTION:
+                this.currentDirection = converter.fromJson(OverworldRepresentation.Direction.class, message);
+                break;
+
+            case OPTION_INPUT:
+                //notify("", ComponentObserver.ComponentEvent.OPTION_INPUT);
+                break;
+
+            default:
+                break;
+        }
     }
 }
