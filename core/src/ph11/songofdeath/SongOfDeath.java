@@ -15,6 +15,7 @@ import ph11.songofdeath.overworld.SongOfDeathLevel1;
 import ph11.songofdeath.screens.LoadGameScreen;
 import ph11.songofdeath.screens.MainMenuScreen;
 import ph11.songofdeath.screens.OptionsScreen;
+import ph11.songofdeath.screens.PauseScreen;
 
 public class SongOfDeath extends Game implements AbstractSongOfDeath {
 	public enum ScreenEnum {
@@ -22,6 +23,7 @@ public class SongOfDeath extends Game implements AbstractSongOfDeath {
 		MainMenu,
 		Options,
 		Overworld,
+		Pause,
 		Battle
 	}
 	private SpriteBatch batch;
@@ -29,6 +31,7 @@ public class SongOfDeath extends Game implements AbstractSongOfDeath {
 	private MainMenuScreen mainMenuScreen;
 	private OptionsScreen OptionsScreen;
 	private LoadGameScreen LoadGameScreen;
+	private PauseScreen PauseScreen;
 	SongOfDeathLevel1 level1;
 
 	public void changeScreen(ScreenEnum screen_type) {
@@ -42,6 +45,9 @@ public class SongOfDeath extends Game implements AbstractSongOfDeath {
 				break;
 			case Options:
 				this.setScreen(this.OptionsScreen);
+				break;
+			case Pause:
+				this.setScreen(this.PauseScreen);
 				break;
 			case Battle:
 				//this.setScreen(this.BattleScreen);
@@ -59,6 +65,7 @@ public class SongOfDeath extends Game implements AbstractSongOfDeath {
 		mainMenuScreen = new MainMenuScreen(this);
 		OptionsScreen = new OptionsScreen(this);
 		LoadGameScreen = new LoadGameScreen(this);
+		PauseScreen = new PauseScreen(this);
 
 		this.setScreen(mainMenuScreen);
 	}

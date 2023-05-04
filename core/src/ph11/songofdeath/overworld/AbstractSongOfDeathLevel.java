@@ -38,4 +38,5 @@ abstract public class AbstractSongOfDeathLevel implements AbstractSongOfDeath {
     abstract public MapLayer getEntityLayer();
     abstract public Array<OverworldRepresentation> getEntities();
     abstract public void renderEntities(OverworldScreen screen, float delta);
+    abstract public void pause();
 }
