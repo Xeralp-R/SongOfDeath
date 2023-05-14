@@ -10,6 +10,7 @@ import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
+import com.jogamp.newt.Screen;
 import ph11.songofdeath.SongOfDeath;
 import ph11.songofdeath.entity.overworldrepresentation.OverworldInteractable;
 import ph11.songofdeath.entity.overworldrepresentation.OverworldRepresentation;
@@ -114,5 +115,10 @@ public class SongOfDeathLevel1 extends AbstractSongOfDeathLevel {
     @Override
     public void renderEntities(OverworldScreen screen, float delta) {
         this.playerRepresentation.render(screen, delta);
+    }
+
+    @Override
+    public void pause() {
+        game.changeScreen(SongOfDeath.ScreenEnum.Pause);
     }
 }

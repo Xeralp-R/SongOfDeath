@@ -50,6 +50,12 @@ public class OverworldRepresentation {
         }
     }
 
+    public void registerObserver(ProcessorObserverInterface observer) {
+        this.inputProcessor.addObserver(observer);
+        this.graphicsProcessor.addObserver(observer);
+        this.physicsProcessor.addObserver(observer);
+    }
+
     public void render(OverworldScreen screen, float delta) {
         inputProcessor.render(screen, this, delta);
         physicsProcessor.render(screen, this, delta);

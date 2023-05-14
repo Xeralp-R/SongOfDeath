@@ -9,12 +9,13 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.math.collision.Ray;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Json;
+import ph11.songofdeath.entity.overworldrepresentation.AbstractProcessor;
 import ph11.songofdeath.entity.overworldrepresentation.OverworldRepresentation;
 import ph11.songofdeath.entity.overworldrepresentation.ProcessorInterface;
 import ph11.songofdeath.overworld.AbstractSongOfDeathLevel;
 
 
-abstract public class PhysicsProcessor implements ProcessorInterface {
+abstract public class PhysicsProcessor extends AbstractProcessor implements ProcessorInterface {
     protected Vector2 nextEntityPosition, currentEntityPosition;
     protected OverworldRepresentation.Direction currentDirection;
     protected Json json;
