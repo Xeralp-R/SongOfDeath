@@ -22,8 +22,6 @@ abstract public class PhysicsProcessor implements ProcessorInterface {
 
     public Rectangle boundingBox;
     protected BoundingBoxLocation boundingBoxLocation;
-    protected Ray selectionRay;
-    protected static final float SELECT_RAY_MAXIMUM_DISTANCE = 32.0f;
 
     public enum BoundingBoxLocation {
         BOTTOM_LEFT,
@@ -38,7 +36,6 @@ abstract public class PhysicsProcessor implements ProcessorInterface {
         this.boundingBox = new Rectangle();
         this.json = new Json();
         boundingBoxLocation = BoundingBoxLocation.BOTTOM_LEFT;
-        selectionRay = new Ray(new Vector3(), new Vector3());
     }
 
     /**

@@ -11,6 +11,7 @@ import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import ph11.songofdeath.SongOfDeath;
+import ph11.songofdeath.entity.overworldrepresentation.OverworldInteractable;
 import ph11.songofdeath.entity.overworldrepresentation.OverworldRepresentation;
 import ph11.songofdeath.entity.overworldrepresentation.playerprocessors.PlayerGraphicsProcessor;
 import ph11.songofdeath.entity.overworldrepresentation.playerprocessors.PlayerInputProcessor;
@@ -31,7 +32,8 @@ public class SongOfDeathLevel1 extends AbstractSongOfDeathLevel {
 
     // TODO: GET IT OUT OF THE MAIN CLASS!
     private OverworldScreen overworldScreen;
-    private Array<OverworldRepresentation> entities = new Array<>(10);
+    private Array<OverworldRepresentation> entities = new Array<>();
+    private Array<OverworldInteractable> interactables = new Array<>();
     private Vector2 playerStartPosition = new Vector2(2085, 1495);
 
     public SongOfDeathLevel1(SongOfDeath game) {
@@ -58,6 +60,7 @@ public class SongOfDeathLevel1 extends AbstractSongOfDeathLevel {
         this.batch = new SpriteBatch();
         this.resourceManager = GlobalResourceManager.get();
 
+        // TODO: Add interactable making!!!!
 
         // make and show the screen
         overworldScreen = new OverworldScreen(this, level1);
@@ -106,6 +109,8 @@ public class SongOfDeathLevel1 extends AbstractSongOfDeathLevel {
         return entities;
     }
 
+    @Override
+    public Array<OverworldInteractable> getInteractables() { return interactables; }
     @Override
     public void renderEntities(OverworldScreen screen, float delta) {
         this.playerRepresentation.render(screen, delta);

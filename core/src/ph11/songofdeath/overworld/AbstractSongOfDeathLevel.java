@@ -5,6 +5,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import ph11.songofdeath.AbstractSongOfDeath;
 import ph11.songofdeath.SongOfDeath;
+import ph11.songofdeath.entity.overworldrepresentation.OverworldInteractable;
 import ph11.songofdeath.entity.overworldrepresentation.OverworldRepresentation;
 import ph11.songofdeath.screens.OverworldScreen;
 
@@ -37,5 +38,6 @@ abstract public class AbstractSongOfDeathLevel implements AbstractSongOfDeath {
     abstract public MapLayer getCollisionLayer();
     abstract public MapLayer getEntityLayer();
     abstract public Array<OverworldRepresentation> getEntities();
+    abstract public Array<OverworldInteractable> getInteractables();
     abstract public void renderEntities(OverworldScreen screen, float delta);
 }

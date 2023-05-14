@@ -55,7 +55,7 @@ public class PlayerInputProcessor extends InputProcessor {
             Gdx.app.exit();
         }
         else if(keyStatusMap.get(Keys.INTERACT)) {
-            //interactReleased();
+            entity.sendMessage(MessageType.INIT_INTERACT_ENTITY, converter.toJson(this.currentDirection));
             interact = true;
         }
         else if(keyStatusMap.get(Keys.OPTION)) {

@@ -3,8 +3,12 @@ package ph11.songofdeath.entity.overworldrepresentation.playerprocessors;
 import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.objects.RectangleMapObject;
+import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.Json;
+import ph11.songofdeath.entity.overworldrepresentation.OverworldInteractable;
 import ph11.songofdeath.entity.overworldrepresentation.OverworldRepresentation;
 import ph11.songofdeath.entity.overworldrepresentation.abstractprocessors.PhysicsProcessor;
 import ph11.songofdeath.overworld.AbstractSongOfDeathLevel;
@@ -14,6 +18,14 @@ public class PlayerPhysicsProcessor extends PhysicsProcessor {
     private OverworldRepresentation.State state;
     private String previousDiscovery;
     private String previousEnemySpawn;
+    private Json classCompressor;
+
+    // stuff to check interaction
+    private static final float SELECT_RAY_MAXIMUM_DISTANCE = 32.0f;
+    private boolean checkInteract = true;
+    private Vector2 intersectionRayRoot;
+    private Vector2 intersectionRayTip;
+
 
     public PlayerPhysicsProcessor() {
         super.velocity = new Vector2(5f, 5f);
@@ -30,17 +42,26 @@ public class PlayerPhysicsProcessor extends PhysicsProcessor {
         // try out the next position
         super.updateBoundingBoxPosition(nextEntityPosition);
 
+        // check if we'll change screen
         this.checkPortalLayerActivation(level);
+        // check if we'll interact
+        if (this.checkInteract) {
+            this.checkInteractionInteractableCandidate(level);
+            this.checkInteract = false;
+        }
 
+        // check if there is a collision
         boolean hasCollidedMapBoundaries = super.checkCollisionWithMapLayer(entity, level);
         boolean hasCollidedMapEntities = false; //super.checkCollisionWithMapEntities(entity, level);
         boolean isWalking = (state == OverworldRepresentation.State.WALKING);
+        // if there is none, move the player to that position
         if (!hasCollidedMapBoundaries && !hasCollidedMapEntities && isWalking) {
             super.setNextPositionToCurrent(entity);
 
             screen.getCamera().position.set(currentEntityPosition, 0f);
             screen.getCamera().update();
         }
+        // otherwise, move the player back to the old position
         else {
             super.updateBoundingBoxPosition(currentEntityPosition);
         }
@@ -48,11 +69,11 @@ public class PlayerPhysicsProcessor extends PhysicsProcessor {
         super.calculateNextPosition(delta);
     }
 
-    private boolean checkPortalLayerActivation(AbstractSongOfDeathLevel level) {
+    private void checkPortalLayerActivation(AbstractSongOfDeathLevel level) {
         MapLayer mapPortalLayer =  level.getPortalLayer();
 
         if(mapPortalLayer == null) {
-            return false;
+            return;
         }
 
         // minimize initializes
@@ -65,15 +86,60 @@ public class PlayerPhysicsProcessor extends PhysicsProcessor {
                 if(boundingBox.overlaps(rectangle)) {
                     String mapName = object.getName();
                     if(mapName == null) {
-                        return false;
+                        return;
                     }
 
-                    // somehow go to the next map: to be implemented
-                    return true;
+                    // TODO: somehow go to the next map
+                    return;
                 }
             }
         }
-        return false;
+    }
+
+    private void checkInteractionInteractableCandidate(AbstractSongOfDeathLevel level) {
+        Array<OverworldInteractable> interactables = new Array<>();
+        interactables.addAll(level.getInteractables());
+
+        this.intersectionRayRoot = super.nextEntityPosition;
+        switch (super.currentDirection) {
+            case UP:
+                this.intersectionRayTip = intersectionRayRoot.add(0, SELECT_RAY_MAXIMUM_DISTANCE);
+                break;
+            case DOWN:
+                this.intersectionRayTip = intersectionRayRoot.add(0, -SELECT_RAY_MAXIMUM_DISTANCE);
+                break;
+            case RIGHT:
+                this.intersectionRayTip = intersectionRayRoot.add(SELECT_RAY_MAXIMUM_DISTANCE, 0);
+                break;
+            case LEFT:
+                this.intersectionRayTip = intersectionRayRoot.add(-SELECT_RAY_MAXIMUM_DISTANCE, 0);
+                break;
+        }
+
+        // there might be more than one rectangle that's close, in which case only one may be selected
+        Array<OverworldInteractable> interactionCandidates = new Array<>();
+
+        for (OverworldInteractable interactable : interactables) {
+            if (Intersector.intersectSegmentRectangle(intersectionRayRoot,intersectionRayTip,interactable.getInteractionRectangle())) {
+                interactionCandidates.add(interactable);
+            }
+        }
+
+        // determine which of the interaction candidates is closest
+        OverworldInteractable closestInteractable;
+        float currentDistance = 100.0f;
+        Vector2 interactableCenter = new Vector2();
+        for (OverworldInteractable interactable : interactionCandidates) {
+            interactable.getInteractionRectangle().getCenter(interactableCenter);
+
+            float tentativeDistance = interactableCenter.dst(intersectionRayRoot);
+            if (tentativeDistance < currentDistance) {
+                currentDistance = tentativeDistance;
+                closestInteractable = interactable;
+            }
+        }
+
+        // notify the exterior...?
     }
 
     @Override
@@ -92,6 +158,11 @@ public class PlayerPhysicsProcessor extends PhysicsProcessor {
 
             case CURRENT_DIRECTION:
                 super.currentDirection = json.fromJson(OverworldRepresentation.Direction.class, message);
+                break;
+
+            case INIT_INTERACT_ENTITY:
+                super.currentDirection = json.fromJson(OverworldRepresentation.Direction.class, message);
+                this.checkInteract = true;
                 break;
 
             default:
