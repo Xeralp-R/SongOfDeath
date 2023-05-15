@@ -30,11 +30,14 @@ import com.gdx.game.map.Map;
 import com.gdx.game.map.MapFactory;
 import com.gdx.game.map.MapManager;
 import com.gdx.game.profile.ProfileManager;*/
+import ph11.songofdeath.SongOfDeath;
 import ph11.songofdeath.entity.overworldrepresentation.ProcessorInterface;
+import ph11.songofdeath.entity.overworldrepresentation.ProcessorObserverInterface;
 import ph11.songofdeath.overworld.AbstractSongOfDeathLevel;
 import ph11.songofdeath.entity.overworldrepresentation.OverworldRepresentation;
 
-public class OverworldScreen extends AbstractScreen {
+public class OverworldScreen extends AbstractScreen implements ProcessorObserverInterface {
+
     public static class VIEWPORT {
         private static float viewportWidth;
         private static float viewportHeight;
@@ -83,6 +86,7 @@ public class OverworldScreen extends AbstractScreen {
         // the old way had a way to get it out of a save state
         // for now, we're just going to use a straight one
         player = level.getPlayerRepresentation();
+        player.registerObserver(this);
         //createImage(player.image, 1200, 50, overworldTable);
 
         this.inputMultiplexer = new InputMultiplexer();
@@ -218,6 +222,18 @@ public class OverworldScreen extends AbstractScreen {
     }
 
     @Override
+    public void onNotify(String value, ProcessorEvent event) {
+        switch(event){
+            case OPTION_INPUT:
+                setGameState(GameState.PAUSED);
+                level.pause();
+                break;
+            default:
+                break;
+        }
+    }
+
+    @Override
     public void resize(int width, int height) {
         //camera.setToOrtho(false, VIEWPORT.viewportWidth, VIEWPORT.viewportHeight);
         //playerHUD.resize((int) VIEWPORT.physicalWidth, (int) VIEWPORT.physicalHeight);
@@ -248,6 +264,7 @@ public class OverworldScreen extends AbstractScreen {
             mapRenderer.dispose();
         }
     }
+
 
     public enum GameState {
         SAVING,

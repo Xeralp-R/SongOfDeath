@@ -3,6 +3,7 @@ package ph11.songofdeath.entity.overworldrepresentation.playerprocessors;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.utils.Json;
+import ph11.songofdeath.entity.overworldrepresentation.ProcessorObserverInterface;
 import ph11.songofdeath.entity.overworldrepresentation.abstractprocessors.InputProcessor;
 import ph11.songofdeath.entity.overworldrepresentation.OverworldRepresentation;
 import ph11.songofdeath.entity.overworldrepresentation.ProcessorInterface;
@@ -55,7 +56,7 @@ public class PlayerInputProcessor extends InputProcessor {
             Gdx.app.exit();
         }
         else if(keyStatusMap.get(Keys.INTERACT)) {
-            //interactReleased();
+            entity.sendMessage(MessageType.INIT_INTERACT_ENTITY, converter.toJson(this.currentDirection));
             interact = true;
         }
         else if(keyStatusMap.get(Keys.OPTION)) {
@@ -97,12 +98,8 @@ public class PlayerInputProcessor extends InputProcessor {
                 keyStatusMap.put(Keys.INTERACT, true);
                 break;
 
-            case Input.Keys.O:
-                keyStatusMap.put(Keys.OPTION, true);
-                break;
-
             case Input.Keys.ESCAPE:
-                keyStatusMap.put(Keys.QUIT, true);
+                keyStatusMap.put(Keys.OPTION, true);
                 break;
 
             default:
@@ -139,12 +136,8 @@ public class PlayerInputProcessor extends InputProcessor {
                 keyStatusMap.put(Keys.INTERACT, false);
                 break;
 
-            case Input.Keys.O:
-                keyStatusMap.put(Keys.OPTION, false);
-                break;
-
             case Input.Keys.ESCAPE:
-                keyStatusMap.put(Keys.QUIT, false);
+                keyStatusMap.put(Keys.OPTION, false);
                 break;
 
             default:
@@ -201,7 +194,8 @@ public class PlayerInputProcessor extends InputProcessor {
                 break;
 
             case OPTION_INPUT:
-                //notify("", ComponentObserver.ComponentEvent.OPTION_INPUT);
+                keyStatusMap.put(Keys.OPTION, false);
+                super.notify("", ProcessorObserverInterface.ProcessorEvent.OPTION_INPUT);
                 break;
 
             default:

@@ -9,12 +9,13 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.math.collision.Ray;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Json;
+import ph11.songofdeath.entity.overworldrepresentation.AbstractProcessor;
 import ph11.songofdeath.entity.overworldrepresentation.OverworldRepresentation;
 import ph11.songofdeath.entity.overworldrepresentation.ProcessorInterface;
 import ph11.songofdeath.overworld.AbstractSongOfDeathLevel;
 
 
-abstract public class PhysicsProcessor implements ProcessorInterface {
+abstract public class PhysicsProcessor extends AbstractProcessor implements ProcessorInterface {
     protected Vector2 nextEntityPosition, currentEntityPosition;
     protected OverworldRepresentation.Direction currentDirection;
     protected Json json;
@@ -22,8 +23,6 @@ abstract public class PhysicsProcessor implements ProcessorInterface {
 
     public Rectangle boundingBox;
     protected BoundingBoxLocation boundingBoxLocation;
-    protected Ray selectionRay;
-    protected static final float SELECT_RAY_MAXIMUM_DISTANCE = 32.0f;
 
     public enum BoundingBoxLocation {
         BOTTOM_LEFT,
@@ -38,7 +37,6 @@ abstract public class PhysicsProcessor implements ProcessorInterface {
         this.boundingBox = new Rectangle();
         this.json = new Json();
         boundingBoxLocation = BoundingBoxLocation.BOTTOM_LEFT;
-        selectionRay = new Ray(new Vector3(), new Vector3());
     }
 
     /**

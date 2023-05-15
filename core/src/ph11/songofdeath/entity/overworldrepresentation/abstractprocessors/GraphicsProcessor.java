@@ -4,11 +4,12 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Json;
+import ph11.songofdeath.entity.overworldrepresentation.AbstractProcessor;
 import ph11.songofdeath.entity.overworldrepresentation.OverworldRepresentation;
 import ph11.songofdeath.entity.overworldrepresentation.ProcessorInterface;
 import ph11.songofdeath.globalmanagers.GlobalResourceManager;
 
-abstract public class GraphicsProcessor implements ProcessorInterface {
+abstract public class GraphicsProcessor extends AbstractProcessor implements ProcessorInterface {
     protected TextureRegion currentFrame = null;
     protected float frameTime = 0f;
     protected OverworldRepresentation.State currentState;

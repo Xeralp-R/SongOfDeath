@@ -15,8 +15,8 @@ public interface ProcessorInterface {
         LOAD_ANIMATIONS,
         INIT_DIRECTION,
         INIT_STATE,
-        INIT_SELECT_ENTITY,
-        ENTITY_SELECTED,
+        INIT_INTERACT_ENTITY,
+        ENTITY_INTERACT,
         ENTITY_DESELECTED,
         OPTION_INPUT
     }
