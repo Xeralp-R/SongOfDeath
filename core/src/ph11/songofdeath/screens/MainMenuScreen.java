@@ -34,12 +34,12 @@ public class MainMenuScreen extends AbstractScreen {
             }
         });
 
-        Actor loadButton = createTextButton("Load Game", 300, 110, 0, 10, menuTable,true);
+        Actor loadButton = createTextButton("Battle Screen", 300, 110, 0, 10, menuTable,true);
         loadButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent even, float x, float y) {
                 //setScreenWithTransition((BaseScreen) gdxGame.getScreen(), new MenuLoadGameScreen(gdxGame, (BaseScreen) gdxGame.getScreen(), resourceManager), new ArrayList<>());
-                game.changeScreen(SongOfDeath.ScreenEnum.LoadGame);
+                game.changeScreen(SongOfDeath.ScreenEnum.Battle);
             }
         });
 

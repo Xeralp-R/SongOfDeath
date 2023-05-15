@@ -10,13 +10,20 @@ package ph11.songofdeath;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import ph11.songofdeath.battle.internal.battle.BattleManager;
+import ph11.songofdeath.battle.internal.entities.Enemy;
+import ph11.songofdeath.battle.internal.entities.characters.PartyMembers;
+import ph11.songofdeath.battle.internal.location.Location;
 import ph11.songofdeath.globalmanagers.GlobalResourceManager;
 import ph11.songofdeath.overworld.SongOfDeathLevel1;
 import ph11.songofdeath.screens.LoadGameScreen;
 import ph11.songofdeath.screens.MainMenuScreen;
 import ph11.songofdeath.screens.OptionsScreen;
+import ph11.songofdeath.screens.BattleScreen;
 
 public class SongOfDeath extends Game implements AbstractSongOfDeath {
+
+
 	public enum ScreenEnum {
 		LoadGame,
 		MainMenu,
@@ -29,7 +36,14 @@ public class SongOfDeath extends Game implements AbstractSongOfDeath {
 	private MainMenuScreen mainMenuScreen;
 	private OptionsScreen OptionsScreen;
 	private LoadGameScreen LoadGameScreen;
+	private BattleScreen BattleScreen;
 	SongOfDeathLevel1 level1;
+
+	private Location location;
+
+	public Location getLocation() {
+		return this.location;
+	}
 
 	public void changeScreen(ScreenEnum screen_type) {
 		// TODO: add transitions
@@ -44,7 +58,7 @@ public class SongOfDeath extends Game implements AbstractSongOfDeath {
 				this.setScreen(this.OptionsScreen);
 				break;
 			case Battle:
-				//this.setScreen(this.BattleScreen);
+				this.setScreen(this.BattleScreen);
 				break;
 			case Overworld:
 				level1 = new SongOfDeathLevel1(this);
@@ -56,9 +70,11 @@ public class SongOfDeath extends Game implements AbstractSongOfDeath {
 		this.batch = new SpriteBatch();
 		this.resourceManager = GlobalResourceManager.get();
 
+		initBattleNecessities();
 		mainMenuScreen = new MainMenuScreen(this);
 		OptionsScreen = new OptionsScreen(this);
 		LoadGameScreen = new LoadGameScreen(this);
+		BattleScreen = new BattleScreen(this);
 
 		this.setScreen(mainMenuScreen);
 	}
@@ -79,5 +95,24 @@ public class SongOfDeath extends Game implements AbstractSongOfDeath {
 	@Override
 	public SpriteBatch getBatch() {
 		return batch;
+	}
+
+	private void initBattleNecessities(){
+		PartyMembers orpheus = new PartyMembers("Orpheus", 1000, 50, 100, 100, 100,"overworldentities/player/temp-character.png");
+		orpheus.addToActiveParty();
+
+		Location desert = new Location("desert");
+		this.location = desert;
+		PartyMembers.activeParty.setPartyLocation(desert);
+
+		Enemy blueSlime = new Enemy("Blue Slime", "blahblahblah", desert, 25, 200, 10, 50, 50, 100, "overworldentities/enemy/temp-enemy.png");
+		Enemy greenSlime = new Enemy("Green Slime", "blahblahblah", desert, 25, 200, 10, 50, 50, 100, "overworldentities/enemy/temp-enemy.png");
+		Enemy pinkSlime = new Enemy("Pink Slime", "blahblahblah", desert, 25, 200, 10, 50, 50, 100, "overworldentities/enemy/temp-enemy.png");
+		Enemy redSlime = new Enemy("Red Slime", "blahblahblah", desert, 25, 200, 10, 50, 50, 100, "overworldentities/enemy/temp-enemy.png");
+
+		desert.getEnemyList().add(blueSlime);
+		desert.getEnemyList().add(greenSlime);
+		desert.getEnemyList().add(pinkSlime);
+		desert.getEnemyList().add(redSlime);
 	}
 }
