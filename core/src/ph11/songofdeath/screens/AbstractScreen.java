@@ -3,21 +3,24 @@ package ph11.songofdeath.screens;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
-import ph11.songofdeath.SongOfDeath;
+import ph11.songofdeath.AbstractSongOfDeath;
 
 public class AbstractScreen implements Screen {
-    protected final SongOfDeath game;
+    protected final AbstractSongOfDeath game;
     protected OrthographicCamera defaultCamera;
 
     // viewport that keeps aspect ratios of the game when resizing
@@ -25,7 +28,7 @@ public class AbstractScreen implements Screen {
     // main stage of each screen
     protected Stage stage;
 
-    public AbstractScreen(SongOfDeath game) {
+    public AbstractScreen(AbstractSongOfDeath game) {
         this.game = game;
 
         // the game will retain it's scaled dimensions regardless of resizing
@@ -40,55 +43,63 @@ public class AbstractScreen implements Screen {
         return table;
     }
 
-    public Label createLabel(String labelText, int fontSize, float padX, float padY, Table table) {
+    public Image createImage(Texture imageProper, float padX, float padY, Table table, boolean newRow) {
+        Image image = new Image(imageProper);
+        image.setSize(64, 64);
+        table.add(image).padLeft(padX).padTop(padY);
+        if(newRow == true) {table.row();}
+        return image;
+    }
+
+    public Label createLabel(String labelText, int fontSize, float padX, float padY, Table table, boolean newRow) {
         // generate the font
         FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
         parameter.size = fontSize;
-        BitmapFont labelFont = game.resourceManager.titleFontGenerator.generateFont(parameter);
+        BitmapFont labelFont = game.getResourceManager().titleFontGenerator.generateFont(parameter);
 
         // generate the stylings for the font
-        Label.LabelStyle style = new Label.LabelStyle(labelFont, game.resourceManager.colorScheme.get("foreground"));
+        Label.LabelStyle style = new Label.LabelStyle(labelFont, game.getResourceManager().colorScheme.get("foreground"));
 
         // generate the actual label
         Label label = new Label(labelText, style);
 
         table.add(label).padLeft(padX).padTop(padY);
-        table.row();
+        if(newRow == true) {table.row();}
         return label;
     }
 
-    public TextButton createTextButton(String buttonText, float padX, float padY, Table table) {
-        BitmapFont buttonFont = game.resourceManager.bodyFontSized;
+    public TextButton createTextButton(String buttonText, float padX, float padY, Table table, boolean newRow) {
+        BitmapFont buttonFont = game.getResourceManager().bodyFontSized;
 
-        Drawable buttonNormalTexture = game.resourceManager.leDieuDeLaMerBareSkin.newDrawable("button");
-        Drawable buttonPressedTexture = game.resourceManager.leDieuDeLaMerBareSkin.newDrawable("button-pressed");
+        Drawable buttonNormalTexture = game.getResourceManager().leDieuDeLaMerBareSkin.newDrawable("button");
+        Drawable buttonPressedTexture = game.getResourceManager().leDieuDeLaMerBareSkin.newDrawable("button-pressed");
         TextButton.TextButtonStyle buttonStyle = new TextButton.TextButtonStyle(
                 buttonNormalTexture, buttonPressedTexture, null, buttonFont
         );
 
         TextButton button = new TextButton(buttonText, buttonStyle);
-        button.getLabel().setColor(this.game.resourceManager.colorScheme.get("foreground"));
+        button.getLabel().setColor(this.game.getResourceManager().colorScheme.get("foreground"));
 
         table.add(button).padLeft(padX).padTop(padY);
-        table.row();
+        if(newRow == true) {table.row();}
         return button;
     }
 
-    public TextButton createTextButton(String buttonText, float width, float height, float padX, float padY, Table table) {
-        BitmapFont buttonFont = game.resourceManager.bodyFontSized;
+    public TextButton createTextButton(String buttonText, float width, float height, float padX, float padY, Table table, boolean newRow) {
+        BitmapFont buttonFont = game.getResourceManager().bodyFontSized;
 
-        Drawable buttonNormalTexture = game.resourceManager.leDieuDeLaMerBareSkin.newDrawable("button");
-        Drawable buttonPressedTexture = game.resourceManager.leDieuDeLaMerBareSkin.newDrawable("button-pressed");
+        Drawable buttonNormalTexture = game.getResourceManager().leDieuDeLaMerBareSkin.newDrawable("button");
+        Drawable buttonPressedTexture = game.getResourceManager().leDieuDeLaMerBareSkin.newDrawable("button-pressed");
         TextButton.TextButtonStyle buttonStyle = new TextButton.TextButtonStyle(
                 buttonNormalTexture, buttonPressedTexture, null, buttonFont
         );
 
         TextButton button = new TextButton(buttonText, buttonStyle);
         button.setSize(width, height);
-        button.getLabel().setColor(this.game.resourceManager.colorScheme.get("foreground"));
+        button.getLabel().setColor(this.game.getResourceManager().colorScheme.get("foreground"));
 
         table.add(button).width(width).height(height).padLeft(padX).padTop(padY);
-        table.row();
+        if(newRow == true) {table.row();}
         return button;
     }
 
