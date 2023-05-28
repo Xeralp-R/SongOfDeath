@@ -13,6 +13,7 @@ public interface BattleObserver {
         PLAYER_HIT,
         ENEMY_HIT,
         BATTLE_END,
+        SELECT_TARGET
     }
 
     void onNotify(Entity enemyEntity, BattleState state);

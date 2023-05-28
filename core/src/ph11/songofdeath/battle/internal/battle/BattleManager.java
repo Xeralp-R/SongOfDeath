@@ -21,6 +21,7 @@ public class BattleManager extends BattleSubject {
     private static final int ENEMY_PARTY_SIZE = 1; // WILL BE INCREASED TO FOUR IN THE FUTURE
 
     private boolean runSuccessful = false;
+    private Entity targetEntity = null;
 
     public boolean isBattleFinished() {
         return battleFinished;
@@ -65,26 +66,15 @@ public class BattleManager extends BattleSubject {
         while(!battleFinished);
     }
 
-    private void speedSort(ArrayList<Entity> battleEntities){
-        Map<Integer, Entity> speedMap = new HashMap<Integer, Entity>();
-        int index = 0;
-        System.out.println("Speed sorted!");
-        for(Entity entity: battleEntities){
-            speedMap.put(entity.getEffectiveStats().getSpeed(), entity);
-        }
-        Map<Integer, Entity> sortedSpeedMap = new TreeMap<Integer, Entity>(
-                new Comparator<Integer>() {
-                    @Override
-                    public int compare(Integer o1, Integer o2){
-                        return o2.compareTo(o1);
-                    }
-                }
-        );
-
-        for(Entity entity: sortedSpeedMap.values()){
-            battleEntities.set(index, entity);
-            index++;
-        }
+    private void speedSort(ArrayList<Entity> battleEntities) {
+        // Sort entities based on speed in descending order
+        battleEntities.sort(new Comparator<Entity>() {
+            @Override
+            public int compare(Entity entity1, Entity entity2) {
+                return Integer.compare(entity2.getEffectiveStats().getSpeed(), entity1.getEffectiveStats().getSpeed());
+            }
+        });
+        Collections.reverse(battleEntities);
     }
 
     private void deadEntity(ArrayList<Entity> battleEntities, Entity targetEntity){
@@ -95,7 +85,13 @@ public class BattleManager extends BattleSubject {
         System.out.println("Decisions being made!");
         switch(decision){
             case "ATTACK":
-                actingPartyMember.attack(actingPartyMember.selectTarget(enemyParty));
+                notify(actingPartyMember, SELECT_TARGET);
+                if (targetEntity != null) {
+                    actingPartyMember.attack(targetEntity);
+                } else {
+                    // Handle the case when no target entity is selected
+                    System.out.println("No target entity selected for attack.");
+                }
                 break;
             case "DEFEND":
                 actingPartyMember.guard();
@@ -114,36 +110,45 @@ public class BattleManager extends BattleSubject {
         }
     }
 
-    private void turn(ArrayList<Entity> battleEntities, Party playerParty, Party enemyParty){
-        int listNumber = 1;
-        speedSort(battleEntities);
-        for(int index = 0; index < battleEntities.size(); index++){
-            Entity actingEntity = battleEntities.get(index);
-            if(actingEntity.getCurrentHP() == 0){
+    private void turn(ArrayList<Entity> battleEntities, Party playerParty, Party enemyParty) {
+        int listSize = battleEntities.size();
+
+        for (int i = 0; i < listSize; i++) {
+            Entity actingEntity = battleEntities.get(i);
+
+            if (actingEntity.getCurrentHP() == 0) {
                 deadEntity(battleEntities, actingEntity);
-                break;
+                i--; // Adjust the index to account for the removed entity
+                listSize--; // Adjust the list size accordingly
+                continue;
             }
 
-            if(actingEntity instanceof PartyMembers){
+            if (actingEntity instanceof PartyMembers) {
+                actingPartyMember = (PartyMembers) actingEntity;
                 System.out.println("Player Notified!");
                 notify(actingEntity, PLAYER_TURN_START);
-
-                System.out.println("Waiting for notification");
             }
 
-            /*
-            if(actingEntity instanceof PartyMembers){
-                decisionMaking(,(PartyMembers)(actingEntity), enemyParty);
+            // Perform the action for the actingEntity
+
+            if (i == listSize - 1) {
+                // Move the entity with the highest speed to the beginning of the list
+                Entity highestSpeedEntity = battleEntities.remove(i);
+                battleEntities.add(0, highestSpeedEntity);
             }
-            else{
-                actingEntity.attack(actingEntity.selectTarget(playerParty));
-            }
-             */
         }
-        return;
     }
+
 
     private void run(){
         runSuccessful = true;
+    }
+
+    public Entity selectTarget(int entityIndex){
+        return enemyParty.getPartyList().get(entityIndex);
+    }
+
+    public Entity selectTarget(Entity targetEntity){
+        return targetEntity;
     }
 }
