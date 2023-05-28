@@ -34,36 +34,6 @@ public class BattleManager extends BattleSubject {
     private boolean battleFinished = true;
 
     public BattleManager(Party playerParty){
-        Location battleLocation = playerParty.getPartyLocation();
-        Location.EnemyList<Enemy> locationEnemyList = battleLocation.generateEnemyList();
-        Party enemyParty = new Party(ENEMY_PARTY_SIZE);
-        ArrayList<Entity> battleEntities = new ArrayList<>();
-
-        for(int index = 0 ; index < ENEMY_PARTY_SIZE; index++){
-            Enemy enemy = locationEnemyList.next();
-            enemyParty.getPartyList().add(enemy);
-        }
-
-        for(Entity entity: playerParty.getPartyList()){
-            battleEntities.add(entity);
-            notify(entity, PLAYER_ADDED);
-        }
-        for(Entity entity: enemyParty.getPartyList()){
-            battleEntities.add(entity);
-            notify(entity, ENEMY_ADDED);
-        }
-
-        do{
-            playerParty.calculateTotalPartyHP();
-            enemyParty.calculateTotalPartyHP();
-
-            if(playerParty.getTotalPartyHP() == 0 || enemyParty.getTotalPartyHP() <= 0 || runSuccessful){
-                battleFinished = true;
-                notify(null, BATTLE_END);
-            }
-            turn(battleEntities, playerParty, enemyParty);
-        }
-        while(!battleFinished);
     }
 
     private void speedSort(ArrayList<Entity> battleEntities) {
@@ -85,7 +55,7 @@ public class BattleManager extends BattleSubject {
         System.out.println("Decisions being made!");
         switch(decision){
             case "ATTACK":
-                notify(actingPartyMember, SELECT_TARGET);
+                notify(actingPartyMember, SELECT_TARGET); //put this in a while loop so the rest of the code doesnt run until targetentity isnt null
                 if (targetEntity != null) {
                     actingPartyMember.attack(targetEntity);
                 } else {
@@ -150,5 +120,38 @@ public class BattleManager extends BattleSubject {
 
     public Entity selectTarget(Entity targetEntity){
         return targetEntity;
+    }
+
+    public void initBattle(Party playerParty){
+        Location battleLocation = playerParty.getPartyLocation();
+        Location.EnemyList<Enemy> locationEnemyList = battleLocation.generateEnemyList();
+        Party enemyParty = new Party(ENEMY_PARTY_SIZE);
+        ArrayList<Entity> battleEntities = new ArrayList<>();
+
+        for(int index = 0 ; index < ENEMY_PARTY_SIZE; index++){
+            Enemy enemy = locationEnemyList.next();
+            enemyParty.getPartyList().add(enemy);
+        }
+
+        for(Entity entity: playerParty.getPartyList()){
+            battleEntities.add(entity);
+            notify(entity, PLAYER_ADDED);
+        }
+        for(Entity entity: enemyParty.getPartyList()){
+            battleEntities.add(entity);
+            notify(entity, ENEMY_ADDED);
+        }
+
+        do{
+            playerParty.calculateTotalPartyHP();
+            enemyParty.calculateTotalPartyHP();
+
+            if(playerParty.getTotalPartyHP() == 0 || enemyParty.getTotalPartyHP() <= 0 || runSuccessful){
+                battleFinished = true;
+                notify(null, BATTLE_END);
+            }
+            turn(battleEntities, playerParty, enemyParty);
+        }
+        while(!battleFinished);
     }
 }

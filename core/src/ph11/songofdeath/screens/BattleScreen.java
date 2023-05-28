@@ -54,10 +54,6 @@ public class BattleScreen extends AbstractScreen implements BattleObserver{
         super(game);
         this.game = game;
 
-
-        battleManager = new BattleManager(PartyMembers.activeParty);
-        battleManager.addObserver(this);
-
         battleScreenStage = new Stage(new ScreenViewport());
         Gdx.input.setInputProcessor(battleScreenStage);
         battleScreenTable = new Table();
@@ -76,6 +72,10 @@ public class BattleScreen extends AbstractScreen implements BattleObserver{
         attackButton.setSize(20,50);
         battleScreenTable.add(attackButton);
 
+        battleManager = new BattleManager(PartyMembers.activeParty);
+        battleManager.addObserver(this);
+        battleManager.initBattle(PartyMembers.activeParty);
+
     }
 
     @Override
@@ -88,11 +88,18 @@ public class BattleScreen extends AbstractScreen implements BattleObserver{
                 ENEMY_SPRITE_PATH = entity.ENTITY_SPRITE_PATH;
                 ENEMY_TEXTURE = new Texture(ENEMY_SPRITE_PATH);
 
+                TextureAtlas ENEMY_ATLAS = new TextureAtlas();
+                ENEMY_ATLAS.addRegion("enemy_atlas", ENEMY_TEXTURE, 0, 0, ENEMY_TEXTURE.getWidth(), ENEMY_TEXTURE.getHeight());
+
+                Skin ENEMY_SKIN = new Skin();
+                ENEMY_SKIN.addRegions(ENEMY_ATLAS);
                 try{
-                    enemySprite = new EntityButton(entity, (Drawable) ENEMY_TEXTURE);
+                    enemySprite = new EntityButton(entity, ENEMY_SKIN.getDrawable("enemy_atlas"));
                 }catch (IllegalArgumentException e){
                     ENEMY_TEXTURE = new Texture("overworldentities/enemy/temp-enemy.png");
-                    enemySprite = new EntityButton(entity, (Drawable) ENEMY_TEXTURE);
+                    ENEMY_ATLAS.addRegion("enemy_atlas", ENEMY_TEXTURE, 0, 0, ENEMY_TEXTURE.getWidth(), ENEMY_TEXTURE.getHeight());
+
+                    enemySprite = new EntityButton(entity, ENEMY_SKIN.getDrawable("enemy_atlas"));
                 }
 
                 enemySprite.addListener(new ClickListener() {
@@ -108,11 +115,18 @@ public class BattleScreen extends AbstractScreen implements BattleObserver{
                 CHARACTER_SPRITE_PATH = entity.ENTITY_SPRITE_PATH;
                 CHARACTER_TEXTURE = new Texture(CHARACTER_SPRITE_PATH);
 
+                TextureAtlas CHARACTER_ATLAS = new TextureAtlas();
+                CHARACTER_ATLAS.addRegion("character_atlas", CHARACTER_TEXTURE, 0, 0, CHARACTER_TEXTURE.getWidth(), CHARACTER_TEXTURE.getHeight());
+
+                Skin CHARACTER_SKIN = new Skin();
+                CHARACTER_SKIN.addRegions(CHARACTER_ATLAS);
                 try{
-                    characterSprite = new EntityButton(entity, (Drawable) CHARACTER_TEXTURE);
+                    characterSprite = new EntityButton(entity, CHARACTER_SKIN.getDrawable("character_atlas"));
                 }catch (IllegalArgumentException e){
                     CHARACTER_TEXTURE = new Texture("overworldentities/player/temp-character.png");
-                    characterSprite = new EntityButton(entity, (Drawable) CHARACTER_TEXTURE);
+                    CHARACTER_ATLAS.addRegion("character_atlas", CHARACTER_TEXTURE, 0, 0, CHARACTER_TEXTURE.getWidth(), CHARACTER_TEXTURE.getHeight());
+
+                    characterSprite = new EntityButton(entity, CHARACTER_SKIN.getDrawable("character_atlas"));
                 }
 
                 battleScreenTable.add(characterSprite);
