@@ -1,6 +1,7 @@
 package ph11.songofdeath.entity.overworldrepresentation;
 
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Array;
@@ -44,7 +45,6 @@ public class OverworldRepresentation {
         }
     }
 
-    //public final Texture image;
     public final AssetManager assetManager = new AssetManager();
 
     final private Array<ProcessorInterface> processors;
@@ -56,10 +56,14 @@ public class OverworldRepresentation {
     public static final int FRAME_WIDTH = 16;
     public static final int FRAME_HEIGHT = 16;
 
-    public OverworldRepresentation(InputProcessor inputProcessor, PhysicsProcessor physicsProcessor, GraphicsProcessor graphicsProcessor) {
+    public OverworldRepresentation(InputProcessor inputProcessor, PhysicsProcessor physicsProcessor, GraphicsProcessor graphicsProcessor, String imageFilepath) {
         this.inputProcessor = inputProcessor;
         this.graphicsProcessor = graphicsProcessor;
         this.physicsProcessor = physicsProcessor;
+
+        // TODO: Allow for multiple directional images
+        // make sure this is always done!!!
+        this.graphicsProcessor.loadFrame(imageFilepath);
 
         this.processors = new Array<>();
         this.processors.add(inputProcessor, graphicsProcessor, physicsProcessor);

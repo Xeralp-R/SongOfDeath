@@ -11,7 +11,10 @@ import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
+import ph11.songofdeath.entity.overworldrepresentation.OverworldRepresentation;
+import ph11.songofdeath.entity.overworldrepresentation.ProcessorInterface;
 import ph11.songofdeath.entity.overworldrepresentation.abstractprocessors.GraphicsProcessor;
+import ph11.songofdeath.screens.OverworldScreen;
 
 public class NPCGraphicsProcessor extends GraphicsProcessor {
     private boolean isSelected = false;
@@ -20,63 +23,49 @@ public class NPCGraphicsProcessor extends GraphicsProcessor {
     private boolean sentShowConversationMessage = false;
     private boolean sentHideConversationMessage = false;
 
-    public NPCGraphicsComponent() {
+    public NPCGraphicsProcessor() {
         // Nothing
     }
 
     @Override
-    public void receiveMessage(String message) {
-        String[] string = message.split(MESSAGE_TOKEN);
-
-        if (string.length == 0) {
-            return;
-        }
-
-        if (string.length == 1) {
-            if (string[0].equalsIgnoreCase(MESSAGE.ENTITY_SELECTED.toString())) {
+    public void receiveMessage(ProcessorInterface.MessageType type, String message) {
+        switch (type) {
+            case ENTITY_INTERACT:
                 isSelected = !wasSelected;
-            } else if (string[0].equalsIgnoreCase(MESSAGE.ENTITY_DESELECTED.toString())) {
+                break;
+
+            case ENTITY_DESELECTED:
                 wasSelected = isSelected;
                 isSelected = false;
-            }
-        }
+                break;
 
-        if (string.length == 2) {
-            if (string[0].equalsIgnoreCase(MESSAGE.CURRENT_POSITION.toString())) {
-                currentPosition = json.fromJson(Vector2.class, string[1]);
-            } else if (string[0].equalsIgnoreCase(MESSAGE.INIT_START_POSITION.toString())) {
-                currentPosition = json.fromJson(Vector2.class, string[1]);
-            } else if (string[0].equalsIgnoreCase(MESSAGE.CURRENT_STATE.toString())) {
-                currentState = json.fromJson(Entity.State.class, string[1]);
-            } else if (string[0].equalsIgnoreCase(MESSAGE.CURRENT_DIRECTION.toString())) {
-                currentDirection = json.fromJson(Entity.Direction.class, string[1]);
-            } else if (string[0].equalsIgnoreCase(MESSAGE.LOAD_ANIMATIONS.toString())) {
-                EntityConfig entityConfig = json.fromJson(EntityConfig.class, string[1]);
-                Array<EntityConfig.AnimationConfig> animationConfigs = entityConfig.getAnimationConfig();
+            case CURRENT_POSITION:
+                currentPosition = json.fromJson(Vector2.class, message);
+                break;
 
-                for(EntityConfig.AnimationConfig animationConfig : animationConfigs) {
-                    Array<String> textureNames = animationConfig.getTexturePaths();
-                    Array<GridPoint2> points = animationConfig.getGridPoints();
-                    Entity.AnimationType animationType = animationConfig.getAnimationType();
-                    float frameDuration = animationConfig.getFrameDuration();
-                    Animation<TextureRegion> animation = null;
+            case INIT_START_POSITION:
+                currentPosition = json.fromJson(Vector2.class, message);
+                break;
 
-                    if (textureNames.size == 1) {
-                        animation = loadAnimation(textureNames.get(0), points, frameDuration);
-                    } else if (textureNames.size == 2) {
-                        animation = loadAnimation(textureNames.get(0), textureNames.get(1), points, frameDuration);
-                    }
+            case CURRENT_STATE:
+                currentState = json.fromJson(OverworldRepresentation.State.class, message);
+                break;
 
-                    animations.put(animationType, animation);
-                }
-            }
+            case CURRENT_DIRECTION:
+                currentDirection = json.fromJson(OverworldRepresentation.Direction.class, message);
+                break;
+
+            case LOAD_ANIMATIONS:
+                // nothing for now...
+
         }
     }
 
     @Override
-    public void update(Entity entity, MapManager mapMgr, Batch batch, float delta) {
-        updateAnimations(delta);
+    public void render(OverworldScreen screen, OverworldRepresentation entity, float delta) {
+        // super.updateAnimations(delta);
 
+        /* For when we have actual proper npcs.
         if (isSelected) {
             drawSelected(entity, mapMgr);
             mapMgr.setCurrentSelectedMapEntity(entity);
@@ -91,8 +80,9 @@ public class NPCGraphicsProcessor extends GraphicsProcessor {
                 sentHideConversationMessage = true;
                 sentShowConversationMessage = false;
             }
-        }
+        }*/
 
+        Batch batch = screen.getBatch();
         batch.begin();
         batch.draw(currentFrame, currentPosition.x, currentPosition.y, 1, 1);
         batch.end();
@@ -109,6 +99,7 @@ public class NPCGraphicsProcessor extends GraphicsProcessor {
         */
     }
 
+    /* NO
     private void drawSelected(Entity entity, MapManager mapMgr) {
         Gdx.gl.glEnable(GL20.GL_BLEND);
         Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
@@ -126,11 +117,5 @@ public class NPCGraphicsProcessor extends GraphicsProcessor {
         shapeRenderer.ellipse(x,y,width,height);
         shapeRenderer.end();
         Gdx.gl.glDisable(GL20.GL_BLEND);
-    }
-
-
-    @Override
-    public void dispose() {
-        // Nothing
-    }
+    }*/
 }

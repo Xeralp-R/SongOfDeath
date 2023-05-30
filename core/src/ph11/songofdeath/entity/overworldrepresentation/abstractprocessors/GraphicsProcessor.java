@@ -1,5 +1,6 @@
 package ph11.songofdeath.entity.overworldrepresentation.abstractprocessors;
 
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
@@ -27,9 +28,16 @@ abstract public class GraphicsProcessor extends AbstractProcessor implements Pro
         shapeRenderer = new ShapeRenderer();
     }
 
-    protected void loadFrame(String textureName) {
+    public void loadFrame(String textureName) {
         GlobalResourceManager.loadTextureAsset(textureName);
         this.currentFrame = new TextureRegion(GlobalResourceManager.getTextureAsset(textureName));
     }
 
+    public void setCurrentFrame(TextureRegion textureRegion) {
+        this.currentFrame = textureRegion;
+    }
+
+    public void setCurrentFrame(Texture texture) {
+        this.currentFrame = new TextureRegion(texture);
+    }
 }
