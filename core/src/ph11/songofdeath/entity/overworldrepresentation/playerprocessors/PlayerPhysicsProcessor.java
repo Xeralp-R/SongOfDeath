@@ -10,6 +10,7 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Json;
 import ph11.songofdeath.entity.overworldrepresentation.OverworldInteractable;
 import ph11.songofdeath.entity.overworldrepresentation.OverworldRepresentation;
+import ph11.songofdeath.entity.overworldrepresentation.ProcessorObserverInterface;
 import ph11.songofdeath.entity.overworldrepresentation.abstractprocessors.PhysicsProcessor;
 import ph11.songofdeath.overworld.AbstractSongOfDeathLevel;
 import ph11.songofdeath.screens.OverworldScreen;
@@ -125,10 +126,14 @@ public class PlayerPhysicsProcessor extends PhysicsProcessor {
             }
         }
 
+        if (interactionCandidates.isEmpty()) {
+            return;
+        }
+
         // determine which of the interaction candidates is closest
-        OverworldInteractable closestInteractable;
-        float currentDistance = 100.0f;
+        OverworldInteractable closestInteractable = interactionCandidates.get(0);
         Vector2 interactableCenter = new Vector2();
+        float currentDistance = 1000.00f;
         for (OverworldInteractable interactable : interactionCandidates) {
             interactable.getInteractionRectangle().getCenter(interactableCenter);
 
@@ -139,7 +144,8 @@ public class PlayerPhysicsProcessor extends PhysicsProcessor {
             }
         }
 
-        // notify the exterior...?
+        // notify the exterior
+        super.notify(this.json.toJson(closestInteractable), ProcessorObserverInterface.ProcessorEvent.LOAD_CONVERSATION);
     }
 
     @Override

@@ -1,6 +1,7 @@
 package ph11.songofdeath.entity.overworldrepresentation;
 
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Array;
 import ph11.songofdeath.entity.overworldrepresentation.abstractprocessors.GraphicsProcessor;
@@ -15,6 +16,21 @@ public class OverworldRepresentation {
         RIGHT,
         DOWN,
         LEFT;
+
+        static public Direction getRandomNext() {
+            return Direction.values()[MathUtils.random(Direction.values().length - 1)];
+        }
+        public Direction getOpposite() {
+            if (this == LEFT) {
+                return RIGHT;
+            } else if (this == RIGHT) {
+                return LEFT;
+            } else if (this == UP) {
+                return DOWN;
+            } else {
+                return UP;
+            }
+        }
     }
 
     public enum State {

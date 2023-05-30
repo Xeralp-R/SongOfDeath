@@ -24,6 +24,7 @@ public class SongOfDeathLevel1 extends AbstractSongOfDeathLevel {
     private SpriteBatch batch;
     private static final AssetManager assetManager = new AssetManager();
     public final TiledMap level1;
+    private boolean playerMovementConnected = true;
 
     // layers!
     protected MapLayer collisionLayer = null;
@@ -46,17 +47,21 @@ public class SongOfDeathLevel1 extends AbstractSongOfDeathLevel {
         assetManager.finishLoading();
 
         // load the map and layers
-        this.level1 = new TmxMapLoader().load("maps/Level1_v1.tmx");
+        this.level1 = new TmxMapLoader().load("maps/Level1_v2.tmx");
         collisionLayer = level1.getLayers().get(COLLISION_LAYER);
         portalLayer = level1.getLayers().get(PORTAL_LAYER);
         entityLayer = level1.getLayers().get(ENTITY_LAYER);
 
         // set the starting position
-        ((RectangleMapObject)entityLayer.getObjects().get(0)).getRectangle().getPosition(this.playerStartPosition);
+        ((RectangleMapObject)entityLayer.getObjects().get("StartingPosition")).getRectangle().getPosition(this.playerStartPosition);
 
         //this.level1 = assetManager.get("maps/Level1.tmx");
         this.playerRepresentation = new OverworldRepresentation(new PlayerInputProcessor(), new PlayerPhysicsProcessor(), new PlayerGraphicsProcessor());
         this.entities.add(playerRepresentation);
+
+        // register enemies
+
+
         this.batch = new SpriteBatch();
         this.resourceManager = GlobalResourceManager.get();
 
@@ -113,11 +118,24 @@ public class SongOfDeathLevel1 extends AbstractSongOfDeathLevel {
     public Array<OverworldInteractable> getInteractables() { return interactables; }
     @Override
     public void renderEntities(OverworldScreen screen, float delta) {
+        if (!this.playerMovementConnected) {
+            return;
+        }
         this.playerRepresentation.render(screen, delta);
     }
 
     @Override
     public void pause() {
         game.changeScreen(SongOfDeath.ScreenEnum.Pause);
+    }
+
+    @Override
+    public void connectPlayerMovement() {
+        this.playerMovementConnected = true;
+    }
+
+    @Override
+    public void disconnectPlayerMovement() {
+        this.playerMovementConnected = false;
     }
 }

@@ -2,36 +2,15 @@ package ph11.songofdeath.entity.overworldrepresentation.playerprocessors;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.utils.Json;
 import ph11.songofdeath.entity.overworldrepresentation.ProcessorObserverInterface;
 import ph11.songofdeath.entity.overworldrepresentation.abstractprocessors.InputProcessor;
 import ph11.songofdeath.entity.overworldrepresentation.OverworldRepresentation;
 import ph11.songofdeath.entity.overworldrepresentation.ProcessorInterface;
 import ph11.songofdeath.screens.OverworldScreen;
 
-import java.util.HashMap;
-import java.util.Map;
-
 public class PlayerInputProcessor extends InputProcessor {
 
     private boolean interact;
-    protected OverworldRepresentation.Direction currentDirection = null;
-    Json converter = new Json();
-
-    protected enum Keys {
-        LEFT, RIGHT, UP, DOWN, QUIT, INTERACT, OPTION
-    }
-
-    protected static Map<Keys, Boolean> keyStatusMap = new HashMap<>();
-    static {
-        keyStatusMap.put(Keys.LEFT, false);
-        keyStatusMap.put(Keys.RIGHT, false);
-        keyStatusMap.put(Keys.UP, false);
-        keyStatusMap.put(Keys.DOWN, false);
-        keyStatusMap.put(Keys.QUIT, false);
-        keyStatusMap.put(Keys.INTERACT, false);
-        keyStatusMap.put(Keys.OPTION, false);
-    }
 
     @Override
     public void render(OverworldScreen screen, OverworldRepresentation entity, float delta) {

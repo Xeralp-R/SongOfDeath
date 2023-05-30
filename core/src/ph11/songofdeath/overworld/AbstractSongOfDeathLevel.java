@@ -41,4 +41,6 @@ abstract public class AbstractSongOfDeathLevel implements AbstractSongOfDeath {
     abstract public Array<OverworldInteractable> getInteractables();
     abstract public void renderEntities(OverworldScreen screen, float delta);
     abstract public void pause();
+    abstract public void connectPlayerMovement();
+    abstract public void disconnectPlayerMovement();
 }

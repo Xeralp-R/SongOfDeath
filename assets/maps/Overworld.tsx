@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<tileset version="1.9" tiledversion="1.9.2" name="Overworld" tilewidth="64" tileheight="64" tilecount="43" columns="0">
+<tileset version="1.9" tiledversion="1.9.2" name="Overworld" tilewidth="64" tileheight="64" tilecount="47" columns="0">
  <grid orientation="orthogonal" width="1" height="1"/>
  <tile id="49">
   <image width="64" height="64" source="x64/Flower1-1.png-1.png (1).png"/>
@@ -116,18 +116,30 @@
   <image width="64" height="64" source="x64/Cliff TopCorner-Left.png"/>
  </tile>
  <tile id="79">
-  <image width="64" height="64" source="x64/Inverted Cliff Middle.png"/>
+  <image width="64" height="64" source="x64/Inverted Top Middle.png"/>
  </tile>
  <tile id="80">
-  <image width="64" height="64" source="x64/Inverted Cliff Corner-Left.png"/>
+  <image width="64" height="64" source="x64/Inverted Top Left.png"/>
  </tile>
  <tile id="81">
-  <image width="64" height="64" source="x64/Inverted Cliff Corner-Right.png"/>
+  <image width="64" height="64" source="x64/Inverted Top Right.png"/>
  </tile>
  <tile id="82">
-  <image width="64" height="64" source="x64/Inverted Cliff Corner2-Left.png"/>
+  <image width="64" height="64" source="x64/Inverted Cliff Corner-Left.png"/>
  </tile>
  <tile id="83">
-  <image width="64" height="64" source="x64/Inverted Cliff Corner2-Right.png"/>
+  <image width="64" height="64" source="x64/Inverted Cliff Corner-Right.png"/>
+ </tile>
+ <tile id="84">
+  <image width="64" height="64" source="x64/Plinth.png"/>
+ </tile>
+ <tile id="85">
+  <image width="64" height="64" source="x64/Crow Overworld.png"/>
+ </tile>
+ <tile id="86">
+  <image width="64" height="64" source="x64/Crow Overwolrd(1).png"/>
+ </tile>
+ <tile id="87">
+  <image width="64" height="64" source="x64/Slime Overworld.png"/>
  </tile>
 </tileset>

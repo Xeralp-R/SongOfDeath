@@ -1,6 +1,7 @@
 package ph11.songofdeath.screens;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -11,6 +12,7 @@ import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.math.Vector3;
 
@@ -31,6 +33,7 @@ import com.gdx.game.map.MapFactory;
 import com.gdx.game.map.MapManager;
 import com.gdx.game.profile.ProfileManager;*/
 import ph11.songofdeath.SongOfDeath;
+import ph11.songofdeath.entity.overworldrepresentation.OverworldInteractable;
 import ph11.songofdeath.entity.overworldrepresentation.ProcessorInterface;
 import ph11.songofdeath.entity.overworldrepresentation.ProcessorObserverInterface;
 import ph11.songofdeath.overworld.AbstractSongOfDeathLevel;
@@ -221,6 +224,37 @@ public class OverworldScreen extends AbstractScreen implements ProcessorObserver
         camera.update();
     }
 
+    public void interact(OverworldInteractable interactable) {
+        // turn off motion
+        level.disconnectPlayerMovement();
+
+        // begin running through the lines
+        Array<String> dialogLines = interactable.getDialogText();
+        for (String dialog : dialogLines) {
+            // live
+            this.showDialog(dialog);
+        }
+
+        switch (interactable.getInteractionResult()) {
+            case Battle:
+                // TODO: begin battle
+                break;
+            case NoResult:
+                break;
+        }
+
+        // turn back on motion
+        level.connectPlayerMovement();
+    }
+
+    public void showDialog(String dialogText) {
+        System.out.println(dialogText);
+        pause();
+        if(Gdx.input.isKeyPressed(Input.Keys.ANY_KEY)) {
+            resume();
+        }
+    }
+
     @Override
     public void onNotify(String value, ProcessorEvent event) {
         switch(event){
@@ -228,6 +262,8 @@ public class OverworldScreen extends AbstractScreen implements ProcessorObserver
                 setGameState(GameState.PAUSED);
                 level.pause();
                 break;
+            case LOAD_CONVERSATION:
+                this.interact(json.fromJson(OverworldInteractable.class, value));
             default:
                 break;
         }
