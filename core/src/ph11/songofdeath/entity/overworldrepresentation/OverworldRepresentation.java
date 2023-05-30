@@ -37,6 +37,11 @@ public class OverworldRepresentation {
         IDLE,
         WALKING,
         IMMOBILE;//This should always be last
+
+        static public State getRandomNext() {
+            //Ignore IMMOBILE which should be last state
+            return State.values()[MathUtils.random(State.values().length - 2)];
+        }
     }
 
     //public final Texture image;

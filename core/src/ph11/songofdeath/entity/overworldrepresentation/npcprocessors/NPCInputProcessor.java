@@ -3,16 +3,17 @@ package ph11.songofdeath.entity.overworldrepresentation.npcprocessors;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.math.MathUtils;
-import com.gdx.game.entities.Entity;
 import ph11.songofdeath.entity.overworldrepresentation.OverworldRepresentation;
 import ph11.songofdeath.entity.overworldrepresentation.ProcessorInterface;
 import ph11.songofdeath.entity.overworldrepresentation.abstractprocessors.InputProcessor;
+import ph11.songofdeath.screens.OverworldScreen;
 
 /**
  * Handles movement input for npcs: since they don't move, movement is determined randomly
  */
 public class NPCInputProcessor extends InputProcessor {
 
+    // manages whether framing thingy
     private float frameTime = 0.0f;
     private OverworldRepresentation.State currentState;
 
@@ -23,40 +24,34 @@ public class NPCInputProcessor extends InputProcessor {
 
     @Override
     public void receiveMessage(ProcessorInterface.MessageType type, String message) {
-        switch ()
+        switch (type) {
+            case COLLISION_WITH_MAP:
+                currentDirection = OverworldRepresentation.Direction.getRandomNext();
+                break;
 
-        //Specifically for messages with 1 object payload
-        if (string.length == 1) {
-            if (string[0].equalsIgnoreCase(MESSAGE.COLLISION_WITH_MAP.toString())) {
-                currentDirection = Entity.Direction.getRandomNext();
-            } else if (string[0].equalsIgnoreCase(MESSAGE.COLLISION_WITH_ENTITY.toString())) {
-                currentState = Entity.State.IDLE;
-            }
-        }
+            case COLLISION_WITH_ENTITY:
+                currentState = OverworldRepresentation.State.IDLE;
+                break;
 
-        if (string.length == 2) {
-            if (string[0].equalsIgnoreCase(MESSAGE.INIT_STATE.toString())) {
-                currentState = json.fromJson(Entity.State.class, string[1]);
-            } else if (string[0].equalsIgnoreCase(MESSAGE.INIT_DIRECTION.toString())) {
-                currentDirection = json.fromJson(Entity.Direction.class, string[1]);
-            }
+            case INIT_STATE:
+                currentState = converter.fromJson(OverworldRepresentation.State.class, message);
+                break;
+
+            case INIT_DIRECTION:
+                currentDirection = converter.fromJson(OverworldRepresentation.Direction.class, message);
+                break;
         }
     }
 
     @Override
-    public void dispose() {
-        // Nothing
-    }
-
-    @Override
-    public void update(Entity entity, float delta) {
-        if (keys.get(Keys.QUIT)) {
+    public void render(OverworldScreen screen, OverworldRepresentation entity, float delta) {
+        if (keyStatusMap.get(Keys.QUIT)) {
             Gdx.app.exit();
         }
 
         //If IMMOBILE, don't update anything
-        if (currentState == Entity.State.IMMOBILE) {
-            entity.sendMessage(MESSAGE.CURRENT_STATE, json.toJson(Entity.State.IMMOBILE));
+        if (currentState == OverworldRepresentation.State.IMMOBILE) {
+            entity.sendMessage(MessageType.CURRENT_STATE, converter.toJson(OverworldRepresentation.State.IMMOBILE));
             return;
         }
 
@@ -64,32 +59,32 @@ public class NPCInputProcessor extends InputProcessor {
 
         //Change direction after so many seconds
         if (frameTime > MathUtils.random(1,5)) {
-            currentState = Entity.State.getRandomNext();
-            currentDirection = Entity.Direction.getRandomNext();
+            currentState = OverworldRepresentation.State.getRandomNext();
+            currentDirection = OverworldRepresentation.Direction.getRandomNext();
             frameTime = 0.0f;
         }
 
-        if (currentState == Entity.State.IDLE) {
-            entity.sendMessage(MESSAGE.CURRENT_STATE, json.toJson(Entity.State.IDLE));
+        if (currentState == OverworldRepresentation.State.IDLE) {
+            entity.sendMessage(MessageType.CURRENT_STATE, converter.toJson(OverworldRepresentation.State.IDLE));
             return;
         }
 
         switch(currentDirection) {
             case LEFT:
-                entity.sendMessage(MESSAGE.CURRENT_STATE, json.toJson(Entity.State.WALKING));
-                entity.sendMessage(MESSAGE.CURRENT_DIRECTION, json.toJson(Entity.Direction.LEFT));
+                entity.sendMessage(MessageType.CURRENT_STATE, converter.toJson(OverworldRepresentation.State.WALKING));
+                entity.sendMessage(MessageType.CURRENT_DIRECTION, converter.toJson(OverworldRepresentation.Direction.LEFT));
                 break;
             case RIGHT:
-                entity.sendMessage(MESSAGE.CURRENT_STATE, json.toJson(Entity.State.WALKING));
-                entity.sendMessage(MESSAGE.CURRENT_DIRECTION, json.toJson(Entity.Direction.RIGHT));
+                entity.sendMessage(MessageType.CURRENT_STATE, converter.toJson(OverworldRepresentation.State.WALKING));
+                entity.sendMessage(MessageType.CURRENT_DIRECTION, converter.toJson(OverworldRepresentation.Direction.RIGHT));
                 break;
             case UP:
-                entity.sendMessage(MESSAGE.CURRENT_STATE, json.toJson(Entity.State.WALKING));
-                entity.sendMessage(MESSAGE.CURRENT_DIRECTION, json.toJson(Entity.Direction.UP));
+                entity.sendMessage(MessageType.CURRENT_STATE, converter.toJson(OverworldRepresentation.State.WALKING));
+                entity.sendMessage(MessageType.CURRENT_DIRECTION, converter.toJson(OverworldRepresentation.Direction.UP));
                 break;
             case DOWN:
-                entity.sendMessage(MESSAGE.CURRENT_STATE, json.toJson(Entity.State.WALKING));
-                entity.sendMessage(MESSAGE.CURRENT_DIRECTION, json.toJson(Entity.Direction.DOWN));
+                entity.sendMessage(MessageType.CURRENT_STATE, converter.toJson(OverworldRepresentation.State.WALKING));
+                entity.sendMessage(MessageType.CURRENT_DIRECTION, converter.toJson(OverworldRepresentation.Direction.DOWN));
                 break;
         }
     }
@@ -97,7 +92,7 @@ public class NPCInputProcessor extends InputProcessor {
     @Override
     public boolean keyDown(int keycode) {
         if (keycode == Input.Keys.ESCAPE) {
-            keys.put(Keys.QUIT, true);
+            keyStatusMap.put(Keys.QUIT, true);
         }
         return false;
     }
@@ -129,6 +124,11 @@ public class NPCInputProcessor extends InputProcessor {
 
     @Override
     public boolean mouseMoved(int screenX, int screenY) {
+        return false;
+    }
+
+    @Override
+    public boolean scrolled(float v, float v1) {
         return false;
     }
 }
