@@ -77,7 +77,7 @@ public class SongOfDeathLevel1 extends AbstractSongOfDeathLevel {
             // TODO: Make object-agnostic
             RectangleMapObject convertedObject = (RectangleMapObject) mapObject;
             if (mapObject.getName().equals("Plinth")) {
-                String dialogText = "It seems to be a very old plaque, but it's somehow still legible. It reads:|\"Blessed are those who enter here,\nFor eternal paradise is their reward.\"|It doesn't seem like anyone's been here in some time...";
+                String dialogText = "It seems to be a very old plaque, but it's somehow still legible. It reads:&&&\"Blessed are those who enter here,\nFor eternal paradise is their reward.\"&&&It doesn't seem like anyone's been here in some time...";
                 this.interactables.add(new OverworldInteractable(convertedObject.getRectangle(), dialogText, OverworldInteractable.InteractionResult.NoResult));
             }
         }
@@ -148,12 +148,19 @@ public class SongOfDeathLevel1 extends AbstractSongOfDeathLevel {
         if (!this.playerMovementConnected) {
             return;
         }
-        this.playerRepresentation.render(screen, delta);
+        for (int i = 0; i < this.entities.size; ++i) {
+            this.entities.get(i).render(screen, delta);
+        }
     }
 
     @Override
     public void pause() {
         game.changeScreen(SongOfDeath.ScreenEnum.Pause);
+    }
+
+    @Override
+    public void battle() {
+        game.changeScreen(SongOfDeath.ScreenEnum.Battle);
     }
 
     @Override

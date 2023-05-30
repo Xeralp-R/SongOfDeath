@@ -50,14 +50,14 @@ public class OverworldInteractable {
 
     public Array<String> getDialogText() {
 
-        return new Array<>(dialogText.split("|"));
+        return new Array<>(dialogText.split("&&&"));
     }
 
     public InteractionResult getInteractionResult() {
         return interactionResult;
     }
 
-    static private String delimiter = "|[]|";
+    static private String delimiter = "%%%%%";
 
     public static String convertToString(OverworldInteractable object) {
         String test = "";
@@ -73,6 +73,13 @@ public class OverworldInteractable {
 
     public static OverworldInteractable convertFromString(String input) {
         Array<String> array = new Array<>(input.split(delimiter));
-        return new OverworldInteractable(new Rectangle(Inte))
+        return new OverworldInteractable(new Rectangle(
+                Float.parseFloat(array.get(0)),
+                Float.parseFloat(array.get(1)),
+                Float.parseFloat(array.get(2)),
+                Float.parseFloat(array.get(3))
+                ),
+                array.get(4),
+                InteractionResult.recode(Integer.parseInt(array.get(5))));
     }
 }

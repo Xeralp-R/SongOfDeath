@@ -238,6 +238,7 @@ public class OverworldScreen extends AbstractScreen implements ProcessorObserver
         switch (interactable.getInteractionResult()) {
             case Battle:
                 // TODO: begin battle
+                enterBattle(interactable);
                 break;
             case NoResult:
                 break;
@@ -250,7 +251,7 @@ public class OverworldScreen extends AbstractScreen implements ProcessorObserver
     public void showDialog(String dialogText) {
         System.out.println(dialogText);
         pause();
-        if(Gdx.input.isKeyPressed(Input.Keys.ANY_KEY)) {
+        if(inputMultiplexer.keyDown(Input.Keys.ENTER) || inputMultiplexer.keyDown(Input.Keys.E)) {
             resume();
         }
     }
@@ -263,7 +264,7 @@ public class OverworldScreen extends AbstractScreen implements ProcessorObserver
                 level.pause();
                 break;
             case LOAD_CONVERSATION:
-                this.interact(json.fromJson(OverworldInteractable.class, value));
+                this.interact(OverworldInteractable.convertFromString(value));
                 break;
             default:
                 break;
@@ -286,6 +287,11 @@ public class OverworldScreen extends AbstractScreen implements ProcessorObserver
     public void resume() {
         setGameState(GameState.LOADING);
         //playerHUD.resume();
+    }
+
+    public void enterBattle(OverworldInteractable i) {
+        // TODO: make this better
+        level.battle();
     }
 
     @Override

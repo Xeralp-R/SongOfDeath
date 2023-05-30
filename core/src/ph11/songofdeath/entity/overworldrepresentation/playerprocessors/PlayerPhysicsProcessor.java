@@ -145,7 +145,7 @@ public class PlayerPhysicsProcessor extends PhysicsProcessor {
         }
 
         // notify the exterior
-        super.notify(this.json.toJson(closestInteractable), ProcessorObserverInterface.ProcessorEvent.LOAD_CONVERSATION);
+        super.notify(OverworldInteractable.convertToString(closestInteractable), ProcessorObserverInterface.ProcessorEvent.LOAD_CONVERSATION);
     }
 
     @Override
