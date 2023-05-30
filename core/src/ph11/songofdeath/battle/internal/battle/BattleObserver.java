@@ -5,14 +5,13 @@ import ph11.songofdeath.battle.internal.entities.Entity;
 public interface BattleObserver {
     public static enum BattleState{
 
-        BATTLE_START,
         ENEMY_ADDED,
         PLAYER_ADDED,
         PLAYER_TURN_START,
-        PLAYER_TURN_DONE,
-        PLAYER_HIT,
-        ENEMY_HIT,
+        TURN_DONE,
+        ATTACK,
         BATTLE_END,
+        GUARD
     }
 
     void onNotify(Entity enemyEntity, BattleState state);

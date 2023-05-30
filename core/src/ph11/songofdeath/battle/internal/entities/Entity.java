@@ -145,11 +145,11 @@ public abstract class Entity {
         this.effectiveStats = new Stats(this.totalStats.getMaxHP(), this.totalStats.getMaxSP(), effectiveAttack, effectiveDefense, effectiveSpeed);
     }
 
-    public void attack(Entity targetEntity){
+    public int attack(Entity targetEntity){
         int damage = DamageSkill.damageCalculation(this.getEffectiveStats().getAttack(), targetEntity.getEffectiveStats().getDefense(), 0.8, 0.5, targetEntity.getGuardActive());
         targetEntity.setCurrentHP(healthCalculation(damage*-1, targetEntity));
 
-        System.out.printf("\nWow! %s did %d damage to %s\n", this.getName(), damage, targetEntity.getName());
+        return damage;
     }
 
     public void guard(){

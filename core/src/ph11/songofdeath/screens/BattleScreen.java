@@ -1,15 +1,11 @@
 package ph11.songofdeath.screens;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
-import com.badlogic.gdx.InputProcessor;
-import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
@@ -18,30 +14,20 @@ import ph11.songofdeath.battle.internal.battle.BattleManager;
 import ph11.songofdeath.battle.internal.battle.BattleObserver;
 import ph11.songofdeath.battle.internal.entities.Entity;
 import ph11.songofdeath.battle.internal.entities.characters.PartyMembers;
+import ph11.songofdeath.customui.EntityButton;
 
 public class BattleScreen extends AbstractScreen implements BattleObserver{
     private Table battleScreenTable;
-    private TextButton attackButton;
-    private TextButton skillButton;
-    private TextButton defendButton;
-    private TextButton itemButton;
-    private TextButton runButton;
     private Label trashLabel;
-    private Label characterInfo1;
-    private Label characterInfo2;
-    private Label characterInfo3;
-    private Label characterInfo4;
-    private Dialog optionsDialog;
-    private Dialog infoDialog;
-    private Image characterSprite;
-    private Image enemySprite;
+    private EntityButton characterSprite;
+    private EntityButton enemySprite;
 
     private static final String UI_TEXTUREATLAS_PATH = "terra-mother-ui.atlas";
     private static final String UI_SKIN_PATH = "terra-mother-ui.json";
     private static TextureAtlas UI_TEXTUREATLAS = new TextureAtlas(UI_TEXTUREATLAS_PATH);
     private static Skin UI_SKIN = new Skin(Gdx.files.internal(UI_SKIN_PATH), UI_TEXTUREATLAS);
     private String CHARACTER_SPRITE_PATH = "overworldentities/player/temp-character.png";
-    private static Texture CHARACTER_TEXTURE; //= new Texture(CHARACTER_SPRITE_PATH);
+    private static Texture CHARACTER_TEXTURE;
     private String ENEMY_SPRITE_PATH;
     private Texture ENEMY_TEXTURE;
     private BattleManager battleManager;
@@ -49,14 +35,14 @@ public class BattleScreen extends AbstractScreen implements BattleObserver{
     private final SongOfDeath game;
     private final Stage battleScreenStage;
 
+    private final TextButton attackButton, defendButton, runButton;
+    private String enemyInfo, characterInfo, notifInfo;
+    private Label enemyLabel = new Label("", UI_SKIN), characterLabel = new Label("", UI_SKIN), notifLabel = new Label("", UI_SKIN);
 
     private static final int OPTIONS_DIALOG_WIDTH = 300;
     public BattleScreen(SongOfDeath game) {
         super(game);
         this.game = game;
-
-        battleManager = new BattleManager(PartyMembers.activeParty);
-        battleManager.addObserver(this);
 
         battleScreenStage = new Stage(new ScreenViewport());
         Gdx.input.setInputProcessor(battleScreenStage);
@@ -66,114 +52,147 @@ public class BattleScreen extends AbstractScreen implements BattleObserver{
         battleScreenStage.setDebugAll(true);
 
         trashLabel = new Label("", UI_SKIN);
-
-        try{
-            characterSprite = new Image(CHARACTER_TEXTURE);
-        }catch (IllegalArgumentException e){
-            CHARACTER_TEXTURE = new Texture("overworldentities/player/temp-character.png");
-            characterSprite = new Image(CHARACTER_TEXTURE);
-        }
-        try{
-            enemySprite = new Image(ENEMY_TEXTURE);
-        }catch (IllegalArgumentException e){
-            ENEMY_TEXTURE = new Texture("overworldentities/enemy/temp-enemy.png");
-            enemySprite = new Image(ENEMY_TEXTURE);
-        }
-        battleScreenTable.add(characterSprite).center();
-        battleScreenTable.add(enemySprite).center();
-        battleScreenTable.row();
-        battleScreenTable.add(trashLabel).height(75);
-        battleScreenTable.row();
-
-        optionsDialog = new Dialog("", UI_SKIN, "window-player");
         attackButton = new TextButton("Attack", UI_SKIN);
         attackButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent even, float x, float y) {
-                Gdx.app.exit();
                 battleManager.decisionMaking("ATTACK");
             }
         });
-        battleScreenStage.addActor(attackButton);
+        attackButton.setSize(20,50);
+        battleScreenTable.add(attackButton);
 
-        skillButton = new TextButton("Skill", UI_SKIN);
-        defendButton = new TextButton("Defend", UI_SKIN);
+        runButton = new TextButton("Run", UI_SKIN);
+        runButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent even, float x, float y) {
+                battleManager.decisionMaking("RUN");
+            }
+        });
+        runButton.setSize(20,50);
+        battleScreenTable.add(runButton);
+
+        defendButton = new TextButton("Guard", UI_SKIN);
         defendButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent even, float x, float y) {
                 battleManager.decisionMaking("DEFEND");
             }
         });
-        itemButton = new TextButton("Item", UI_SKIN);
-        runButton = new TextButton("Run", UI_SKIN);
+        defendButton.setSize(20,50);
+        battleScreenTable.add(defendButton);
 
-        /*
-        attackButton.setDisabled(true);
-        skillButton.setDisabled(true);
-        defendButton.setDisabled(true);
-        itemButton.setDisabled(true);
-        runButton.setDisabled(true);
-         */
+        battleManager = new BattleManager(PartyMembers.activeParty);
+        battleManager.addObserver(this);
+        battleManager.initBattle(PartyMembers.activeParty);
 
-        battleScreenTable.add(optionsDialog).bottom();
+        characterInfo = new String(battleManager.getActingPartyMember().getName() + " HP: " + battleManager.getActingPartyMember().getCurrentHP()
+                + "/" + battleManager.getActingPartyMember().getTotalStats().getMaxHP());
+        characterLabel = new Label(characterInfo, UI_SKIN);
+        battleScreenTable.row();
+        battleScreenTable.add(characterLabel);
 
-        optionsDialog.getButtonTable().add(attackButton).width(100).height(50);
-        optionsDialog.getButtonTable().row();
-        optionsDialog.getButtonTable().add(skillButton);
-        optionsDialog.getButtonTable().row();
-        optionsDialog.getButtonTable().add(defendButton);
-        optionsDialog.getButtonTable().row();
-        optionsDialog.getButtonTable().add(itemButton);
-        optionsDialog.getButtonTable().row();
-        optionsDialog.getButtonTable().add(runButton);
+        enemyInfo = new String(battleManager.getActingEnemy().getName() + " HP: " + battleManager.getActingEnemy().getCurrentHP() + "/" + battleManager.getActingEnemy().getTotalStats().getMaxHP());
+        enemyLabel = new Label(enemyInfo, UI_SKIN);
+        battleScreenTable.row();
+        battleScreenTable.add(enemyLabel);
 
-        optionsDialog.setModal(false);
-        optionsDialog.setTouchable(Touchable.enabled);
-
-        infoDialog = new Dialog("", UI_SKIN, "window-player");
-        characterInfo1 = new Label( "HP 50/50 MP 20/20", UI_SKIN);
-        characterInfo2 = new Label("CharacterName HP 50/50 MP 20/20", UI_SKIN);
-        characterInfo3 = new Label("CharacterName HP 50/50 MP 20/20", UI_SKIN);
-        characterInfo4 = new Label("CharacterName HP 50/50 MP 20/20", UI_SKIN);
-        battleScreenTable.add(infoDialog).width(400).bottom();
-
-        infoDialog.getContentTable().add(characterInfo1).left();
-        infoDialog.getContentTable().row();
-        infoDialog.getContentTable().add(characterInfo2).left();
-        infoDialog.getContentTable().row();
-        infoDialog.getContentTable().add(characterInfo3).left();
-        infoDialog.getContentTable().row();
-        infoDialog.getContentTable().add(characterInfo4).left();
-        infoDialog.getContentTable().row();
-
-
-        battleManager.setBattleFinished(false);
-
+        notifLabel = new Label(notifInfo, UI_SKIN);
+        notifLabel.setVisible(false);
+        battleScreenTable.row();
+        battleScreenTable.add(notifLabel).center();
     }
 
     @Override
     public void onNotify(Entity entity, BattleState state) {
         switch(state){
             case ENEMY_ADDED:
+                //Everytime an enemy gets added to the screen a new EntityButton is created for that enemy
+                //TODO: Might be able to turn this into a function
+                System.out.println("Adding Enemies!");
                 ENEMY_SPRITE_PATH = entity.ENTITY_SPRITE_PATH;
                 ENEMY_TEXTURE = new Texture(ENEMY_SPRITE_PATH);
+
+                TextureAtlas ENEMY_ATLAS = new TextureAtlas();
+                ENEMY_ATLAS.addRegion("enemy_atlas", ENEMY_TEXTURE, 0, 0, ENEMY_TEXTURE.getWidth(), ENEMY_TEXTURE.getHeight());
+
+                Skin ENEMY_SKIN = new Skin();
+                ENEMY_SKIN.addRegions(ENEMY_ATLAS);
+                try{
+                    enemySprite = new EntityButton(entity, ENEMY_SKIN.getDrawable("enemy_atlas"));
+                }catch (IllegalArgumentException e){
+                    ENEMY_TEXTURE = new Texture("overworldentities/enemy/temp-enemy.png");
+                    ENEMY_ATLAS.addRegion("enemy_atlas", ENEMY_TEXTURE, 0, 0, ENEMY_TEXTURE.getWidth(), ENEMY_TEXTURE.getHeight());
+
+                    enemySprite = new EntityButton(entity, ENEMY_SKIN.getDrawable("enemy_atlas"));
+                }
+
+                enemySprite.addListener(new ClickListener() {
+                    @Override
+                    public void clicked(InputEvent even, float x, float y) {
+
+                        System.out.println("Enemy selected!");
+                    }
+                });
+                battleScreenTable.add(enemySprite);
                 break;
+
             case PLAYER_ADDED:
+                System.out.println("Adding Players!");
                 CHARACTER_SPRITE_PATH = entity.ENTITY_SPRITE_PATH;
                 CHARACTER_TEXTURE = new Texture(CHARACTER_SPRITE_PATH);
+
+                TextureAtlas CHARACTER_ATLAS = new TextureAtlas();
+                CHARACTER_ATLAS.addRegion("character_atlas", CHARACTER_TEXTURE, 0, 0, CHARACTER_TEXTURE.getWidth(), CHARACTER_TEXTURE.getHeight());
+
+                Skin CHARACTER_SKIN = new Skin();
+                CHARACTER_SKIN.addRegions(CHARACTER_ATLAS);
+                try{
+                    characterSprite = new EntityButton(entity, CHARACTER_SKIN.getDrawable("character_atlas"));
+                }catch (IllegalArgumentException e){
+                    CHARACTER_TEXTURE = new Texture("overworldentities/player/temp-character.png");
+                    CHARACTER_ATLAS.addRegion("character_atlas", CHARACTER_TEXTURE, 0, 0, CHARACTER_TEXTURE.getWidth(), CHARACTER_TEXTURE.getHeight());
+
+                    characterSprite = new EntityButton(entity, CHARACTER_SKIN.getDrawable("character_atlas"));
+                }
+
+                battleScreenTable.add(characterSprite);
                 break;
             case PLAYER_TURN_START:
                 attackButton.setDisabled(false);
                 defendButton.setDisabled(false);
                 runButton.setDisabled(false);
-                System.out.println("Turn started!");
+                break;
+            case ATTACK:
+                if(entity == battleManager.getActingPartyMember()){
+                    notifInfo = new String(entity.getName() + " attacked " + battleManager.getActingEnemy().getName() + " for "
+                        + battleManager.getDamage() + "!");
+                } else if (entity == battleManager.getActingEnemy()) {
+                    notifInfo = new String(entity.getName() + " attacked " + battleManager.getActingPartyMember().getName() + " for "
+                            + battleManager.getDamage() + "!");
+                }
+                notifLabel.setText(notifInfo);
+                notifLabel.setVisible(true);
+                disableButtons();
+                break;
+            case GUARD:
+                notifInfo = new String(entity.getName() + " guarded!");
+                notifLabel.setText(notifInfo);
+                notifLabel.setVisible(true);
+                disableButtons();
+                break;
+            case TURN_DONE:
+                System.out.println("Turn finished!");
+                System.out.println(battleManager.getActingEnemy().getCurrentHP());
+                characterInfo = new String(battleManager.getActingPartyMember().getName() + " HP: " + battleManager.getActingPartyMember().getCurrentHP() + "/" + battleManager.getActingPartyMember().getTotalStats().getMaxHP());
+                enemyInfo = new String(battleManager.getActingEnemy().getName() + " HP: " + battleManager.getActingEnemy().getCurrentHP() + "/" + battleManager.getActingEnemy().getTotalStats().getMaxHP());
+                characterLabel.setText(characterInfo);
+                enemyLabel.setText(enemyInfo);
                 break;
             case BATTLE_END:
                 game.changeScreen(SongOfDeath.ScreenEnum.Overworld);
                 break;
         }
-
-
     }
 
 
@@ -200,4 +219,9 @@ public class BattleScreen extends AbstractScreen implements BattleObserver{
         battleScreenTable.remove();
     }
 
+    private void disableButtons(){
+        attackButton.setDisabled(true);
+        defendButton.setDisabled(true);
+        runButton.setDisabled(true);
+    }
 }

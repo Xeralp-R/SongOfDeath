@@ -29,7 +29,7 @@ public class SongOfDeath extends Game implements AbstractSongOfDeath {
 		Options,
 		Overworld,
 		Pause,
-		Battle
+		Battle,
 	}
 	private SpriteBatch batch;
 	public GlobalResourceManager resourceManager;
