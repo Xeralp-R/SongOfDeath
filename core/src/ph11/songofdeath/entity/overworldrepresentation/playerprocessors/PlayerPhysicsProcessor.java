@@ -22,8 +22,8 @@ public class PlayerPhysicsProcessor extends PhysicsProcessor {
     private Json classCompressor;
 
     // stuff to check interaction
-    private static final float SELECT_RAY_MAXIMUM_DISTANCE = 32.0f;
-    private boolean checkInteract = true;
+    private static final float SELECT_RAY_MAXIMUM_DISTANCE = 5.0f;
+    private boolean checkInteract = false;
     private Vector2 intersectionRayRoot;
     private Vector2 intersectionRayTip;
 
@@ -31,7 +31,7 @@ public class PlayerPhysicsProcessor extends PhysicsProcessor {
     public PlayerPhysicsProcessor() {
         super.velocity = new Vector2(5f, 5f);
         boundingBoxLocation = PhysicsProcessor.BoundingBoxLocation.BOTTOM_CENTER;
-        initBoundingBox(0.3f, 0.5f);
+        initBoundingBox(0f, 0f);
         previousDiscovery = "";
         previousEnemySpawn = "0";
     }
@@ -101,19 +101,20 @@ public class PlayerPhysicsProcessor extends PhysicsProcessor {
         Array<OverworldInteractable> interactables = new Array<>();
         interactables.addAll(level.getInteractables());
 
-        this.intersectionRayRoot = super.nextEntityPosition;
+        this.intersectionRayRoot = super.nextEntityPosition.cpy();
+        this.intersectionRayTip = this.intersectionRayRoot.cpy();
         switch (super.currentDirection) {
             case UP:
-                this.intersectionRayTip = intersectionRayRoot.add(0, SELECT_RAY_MAXIMUM_DISTANCE);
+                this.intersectionRayTip.add(0, SELECT_RAY_MAXIMUM_DISTANCE);
                 break;
             case DOWN:
-                this.intersectionRayTip = intersectionRayRoot.add(0, -SELECT_RAY_MAXIMUM_DISTANCE);
+                this.intersectionRayTip.add(0, -SELECT_RAY_MAXIMUM_DISTANCE);
                 break;
             case RIGHT:
-                this.intersectionRayTip = intersectionRayRoot.add(SELECT_RAY_MAXIMUM_DISTANCE, 0);
+                this.intersectionRayTip.add(SELECT_RAY_MAXIMUM_DISTANCE, 0);
                 break;
             case LEFT:
-                this.intersectionRayTip = intersectionRayRoot.add(-SELECT_RAY_MAXIMUM_DISTANCE, 0);
+                this.intersectionRayTip.add(-SELECT_RAY_MAXIMUM_DISTANCE, 0);
                 break;
         }
 

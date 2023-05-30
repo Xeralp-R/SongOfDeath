@@ -14,7 +14,7 @@ public class NPCPhysicsProcessor extends PhysicsProcessor {
 
     public NPCPhysicsProcessor() {
         boundingBoxLocation = BoundingBoxLocation.CENTER;
-        initBoundingBox(0.4f, 0.15f);
+        initBoundingBox(0f, 0f);
     }
 
     @Override

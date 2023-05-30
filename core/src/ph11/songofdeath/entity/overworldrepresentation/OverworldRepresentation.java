@@ -54,7 +54,7 @@ public class OverworldRepresentation {
 
     // not final: not needed for player
     private String dialogText = "";
-    private OverworldInteractable.InteractionResult interactionResult;
+    private OverworldInteractable.InteractionResult interactionResult = null;
     private String name;
 
     // note: these values have not been checked
