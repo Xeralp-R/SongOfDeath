@@ -7,7 +7,27 @@ import com.badlogic.gdx.utils.Array;
 public class OverworldInteractable {
     public enum InteractionResult {
         NoResult,
-        Battle
+        Battle;
+
+        public static int encode(InteractionResult i) {
+            switch (i) {
+                case NoResult:
+                    return 0;
+                case Battle:
+                    return 1;
+            }
+            return -1;
+        }
+
+        public static InteractionResult recode(int i) {
+            if (i == 0) {
+                return NoResult;
+            }
+            if (i == 1) {
+                return Battle;
+            }
+            throw new RuntimeException("unknown interaction result value");
+        }
     }
 
     // note: these values have not been checked
@@ -35,5 +55,24 @@ public class OverworldInteractable {
 
     public InteractionResult getInteractionResult() {
         return interactionResult;
+    }
+
+    static private String delimiter = "|[]|";
+
+    public static String convertToString(OverworldInteractable object) {
+        String test = "";
+        test += object.interactionRectangle.x + delimiter;
+        test += object.interactionRectangle.y + delimiter;
+        test += object.interactionRectangle.width + delimiter;
+        test += object.interactionRectangle.height + delimiter;
+        test += object.dialogText + delimiter;
+        test += Integer.toString(InteractionResult.encode(object.interactionResult));
+
+        return test;
+    }
+
+    public static OverworldInteractable convertFromString(String input) {
+        Array<String> array = new Array<>(input.split(delimiter));
+        return new OverworldInteractable(new Rectangle(Inte))
     }
 }
