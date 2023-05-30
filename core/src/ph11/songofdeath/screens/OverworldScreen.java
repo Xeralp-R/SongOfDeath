@@ -264,6 +264,7 @@ public class OverworldScreen extends AbstractScreen implements ProcessorObserver
                 break;
             case LOAD_CONVERSATION:
                 this.interact(json.fromJson(OverworldInteractable.class, value));
+                break;
             default:
                 break;
         }

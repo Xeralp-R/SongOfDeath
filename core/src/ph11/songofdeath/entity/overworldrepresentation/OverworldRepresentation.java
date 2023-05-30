@@ -52,11 +52,23 @@ public class OverworldRepresentation {
     final private PhysicsProcessor physicsProcessor;
     final private GraphicsProcessor graphicsProcessor;
 
+    // not final: not needed for player
+    private String dialogText = "";
+    private OverworldInteractable.InteractionResult interactionResult;
+    private String name;
+
     // note: these values have not been checked
     public static final int FRAME_WIDTH = 16;
     public static final int FRAME_HEIGHT = 16;
 
-    public OverworldRepresentation(InputProcessor inputProcessor, PhysicsProcessor physicsProcessor, GraphicsProcessor graphicsProcessor, String imageFilepath) {
+    public OverworldRepresentation(
+            String name,
+            String imageFilepath,
+            InputProcessor inputProcessor,
+            PhysicsProcessor physicsProcessor,
+            GraphicsProcessor graphicsProcessor
+    ) {
+        this.name = name;
         this.inputProcessor = inputProcessor;
         this.graphicsProcessor = graphicsProcessor;
         this.physicsProcessor = physicsProcessor;
@@ -85,6 +97,15 @@ public class OverworldRepresentation {
         inputProcessor.render(screen, this, delta);
         physicsProcessor.render(screen, this, delta);
         graphicsProcessor.render(screen, this, delta);
+    }
+
+    public void registerInteractable(String dialogText, OverworldInteractable.InteractionResult result) {
+        this.dialogText = dialogText;
+        this.interactionResult = result;
+    }
+
+    public OverworldInteractable getInteractable() {
+        return new OverworldInteractable(graphicsProcessor.getFrameRectangle(), dialogText, interactionResult);
     }
 
     public Rectangle getBoundingBox() {

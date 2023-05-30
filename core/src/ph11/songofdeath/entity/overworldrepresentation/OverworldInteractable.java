@@ -15,10 +15,10 @@ public class OverworldInteractable {
     public static final int FRAME_HEIGHT = 16;
 
     private final Rectangle interactionRectangle;
-    private final Array<String> dialogText; // TODO: make more efficient
+    private final String dialogText; // TODO: make more efficient
     private final InteractionResult interactionResult;
 
-    public OverworldInteractable(Rectangle objectRectangle, Array<String> dialogText, InteractionResult interactionResult) {
+    public OverworldInteractable(Rectangle objectRectangle, String dialogText, InteractionResult interactionResult) {
         this.interactionRectangle = objectRectangle;
         this.dialogText = dialogText;
         this.interactionResult = interactionResult;
@@ -29,7 +29,8 @@ public class OverworldInteractable {
     }
 
     public Array<String> getDialogText() {
-        return dialogText;
+
+        return new Array<>(dialogText.split("|"));
     }
 
     public InteractionResult getInteractionResult() {

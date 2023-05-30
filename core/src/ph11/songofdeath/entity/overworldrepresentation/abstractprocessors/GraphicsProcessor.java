@@ -3,6 +3,7 @@ package ph11.songofdeath.entity.overworldrepresentation.abstractprocessors;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Json;
 import ph11.songofdeath.entity.overworldrepresentation.AbstractProcessor;
@@ -39,5 +40,9 @@ abstract public class GraphicsProcessor extends AbstractProcessor implements Pro
 
     public void setCurrentFrame(Texture texture) {
         this.currentFrame = new TextureRegion(texture);
+    }
+
+    public Rectangle getFrameRectangle() {
+        return new Rectangle(currentPosition.x, currentPosition.y, currentFrame.getRegionWidth(), currentFrame.getRegionHeight());
     }
 }
