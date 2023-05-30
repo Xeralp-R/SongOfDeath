@@ -1,6 +1,7 @@
 package ph11.songofdeath.screens;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -10,18 +11,28 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import jdk.jfr.internal.tool.Main;
 import ph11.songofdeath.SongOfDeath;
+
+import static com.badlogic.gdx.math.MathUtils.*;
 
 public class OptionsScreen extends AbstractScreen{
     private final Stage OptionStage;
     private final Table OptionTable;
-    private String bgm = "1", sfx = "1"; //initialize the bgm and sfx volume
+    private String bgm = "100", sfx = "100"; //initialize the bgm and sfx volume
     private Actor lowerBGM, higherBGM, lowerSFX, higherSFX, backButton;
+    public static float volume = 1.0f;
+    private Music music;
     public OptionsScreen(final SongOfDeath game){
         super(game);
 
         OptionStage = new Stage(super.viewport, game.getBatch());
         OptionTable = createTable();
+        music = Gdx.audio.newMusic(Gdx.files.internal("bgm.wav"));
+
+        music.setVolume(volume);
+        music.setLooping(true);
+        music.play();
 
         //initialize the upper text
         createLabel("Options", 120, 385, -50, OptionTable, true);
@@ -75,22 +86,36 @@ public class OptionsScreen extends AbstractScreen{
     }
 
     public void changeBGM(boolean increase) { //changes the bgm volume by 1
-        int bgmVol = Integer.parseInt(bgm);
+        float bgmVol = Float.parseFloat(bgm)/100;
         if (increase == true) {
-            bgmVol += 1;
+            if (round(bgmVol) == 0.01) {
+                bgmVol += 0.04;
+            }
+            else {
+                bgmVol += 0.05;
+            }
         } else {
-            bgmVol -= 1;
+            if (round(bgmVol) == 0.05) {
+                bgmVol = 0.01f;
+                System.out.println(bgmVol);
+            }
+            else {
+                bgmVol -= 0.05;
+                System.out.println(bgmVol);
+            }
         }
-        bgm = String.valueOf(bgmVol);
+        volume = bgmVol;
+        bgm = String.valueOf(round(bgmVol*100));
         checkLimit();
+        music.setVolume(volume);
     }
 
     public void changeSFX(boolean increase) { //changes the sfx volume by 1
         int sfxVol = Integer.parseInt(sfx);
         if (increase == true) {
-            sfxVol += 1;
+            sfxVol += 5;
         } else {
-            sfxVol -= 1;
+            sfxVol -= 5;
         }
         sfx = String.valueOf(sfxVol);
         checkLimit();
@@ -137,5 +162,6 @@ public class OptionsScreen extends AbstractScreen{
     public void dispose() {
         super.dispose();
         OptionTable.remove();
+        music.dispose();
     }
 }
