@@ -15,12 +15,17 @@ import static ph11.songofdeath.battle.internal.battle.BattleObserver.BattleState
 
 // CUT DOWN TO ONLY WORK FOR ONE (1) PLAYER CHARACTER AND ONE (1) ENEMY RIGHT NOW , WILL BE UPDATED TO WORK FOR UP TO 4 FOR BOTH
 public class BattleManager extends BattleSubject {
-    private Party playerParty;
+    private Entity actingEntity;
     private PartyMembers actingPartyMember;
-    private Party enemyParty;
-    private static final int ENEMY_PARTY_SIZE = 1; // WILL BE INCREASED TO FOUR IN THE FUTURE
+    public PartyMembers getActingPartyMember(){
+        return actingPartyMember;
+    }
 
-    private boolean runSuccessful = false;
+    private Enemy actingEnemy;
+    public Enemy getActingEnemy(){
+        return actingEnemy;
+    }
+    private static final int ENEMY_PARTY_SIZE = 1;
     private Entity targetEntity = null;
 
     public boolean isBattleFinished() {
@@ -45,6 +50,7 @@ public class BattleManager extends BattleSubject {
             }
         });
         Collections.reverse(battleEntities);
+        System.out.println(battleEntities.get(0).getName() + " " + battleEntities.get(1).getName());
     }
 
     private void deadEntity(ArrayList<Entity> battleEntities, Entity targetEntity){
@@ -52,39 +58,45 @@ public class BattleManager extends BattleSubject {
     }
 
     public void decisionMaking(String decision){
-        System.out.println("Decisions being made!");
+        System.out.println(actingEntity.getName() + " Decisions being made!");
         switch(decision){
             case "ATTACK":
-                notify(actingPartyMember, SELECT_TARGET); //put this in a while loop so the rest of the code doesnt run until targetentity isnt null
-                if (targetEntity != null) {
-                    actingPartyMember.attack(targetEntity);
-                } else {
-                    // Handle the case when no target entity is selected
-                    System.out.println("No target entity selected for attack.");
+                if (actingEntity instanceof PartyMembers) {
+                    actingEntity.attack(actingEnemy);
+                    notify(actingEntity, ENEMY_HIT);
+                } else if (actingEntity instanceof Enemy) {
+                    actingEntity.attack(actingPartyMember);
+                    notify(actingEntity, PLAYER_HIT);
                 }
                 break;
             case "DEFEND":
-                actingPartyMember.guard();
+                actingEntity.guard();
+                notify(actingEntity, GUARD);
                 break;
             case "SKILL":
-                actingPartyMember.displaySkillList();
+                actingEntity.displaySkillList();
                 break;
             case "ITEM":
-                actingPartyMember.displayItemList();
+                if (actingEntity instanceof  PartyMembers) {
+                    ((PartyMembers) actingEntity).displayItemList();
+                }
                 break;
             case "RUN":
                 run();
             default:
-                actingPartyMember.attack(actingPartyMember.selectTarget(enemyParty));
+                if (targetEntity != null && actingEntity instanceof  Enemy && targetEntity instanceof  PartyMembers) {
+                    actingEntity.attack(targetEntity);
+                }
                 break;
         }
+        notify(null, TURN_DONE);
     }
 
     private void turn(ArrayList<Entity> battleEntities, Party playerParty, Party enemyParty) {
         int listSize = battleEntities.size();
 
         for (int i = 0; i < listSize; i++) {
-            Entity actingEntity = battleEntities.get(i);
+            actingEntity = battleEntities.get(i);
 
             if (actingEntity.getCurrentHP() == 0) {
                 deadEntity(battleEntities, actingEntity);
@@ -94,7 +106,6 @@ public class BattleManager extends BattleSubject {
             }
 
             if (actingEntity instanceof PartyMembers) {
-                actingPartyMember = (PartyMembers) actingEntity;
                 System.out.println("Player Notified!");
                 notify(actingEntity, PLAYER_TURN_START);
             }
@@ -111,15 +122,8 @@ public class BattleManager extends BattleSubject {
 
 
     private void run(){
-        runSuccessful = true;
-    }
-
-    public Entity selectTarget(int entityIndex){
-        return enemyParty.getPartyList().get(entityIndex);
-    }
-
-    public Entity selectTarget(Entity targetEntity){
-        return targetEntity;
+        notify(null, BATTLE_END);
+        System.out.println("Running!");
     }
 
     public void initBattle(Party playerParty){
@@ -130,11 +134,13 @@ public class BattleManager extends BattleSubject {
 
         for(int index = 0 ; index < ENEMY_PARTY_SIZE; index++){
             Enemy enemy = locationEnemyList.next();
+            actingEnemy = new Enemy(enemy);
             enemyParty.getPartyList().add(enemy);
         }
 
         for(Entity entity: playerParty.getPartyList()){
             battleEntities.add(entity);
+            actingPartyMember = (PartyMembers) entity;
             notify(entity, PLAYER_ADDED);
         }
         for(Entity entity: enemyParty.getPartyList()){
@@ -142,11 +148,13 @@ public class BattleManager extends BattleSubject {
             notify(entity, ENEMY_ADDED);
         }
 
+        speedSort(battleEntities);
+
         do{
             playerParty.calculateTotalPartyHP();
             enemyParty.calculateTotalPartyHP();
 
-            if(playerParty.getTotalPartyHP() == 0 || enemyParty.getTotalPartyHP() <= 0 || runSuccessful){
+            if(playerParty.getTotalPartyHP() == 0 || enemyParty.getTotalPartyHP() <= 0){
                 battleFinished = true;
                 notify(null, BATTLE_END);
             }

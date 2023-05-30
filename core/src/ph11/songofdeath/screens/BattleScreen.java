@@ -1,37 +1,24 @@
 package ph11.songofdeath.screens;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
-import com.badlogic.gdx.InputProcessor;
-import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import ph11.songofdeath.SongOfDeath;
 import ph11.songofdeath.battle.internal.battle.BattleManager;
 import ph11.songofdeath.battle.internal.battle.BattleObserver;
 import ph11.songofdeath.battle.internal.entities.Entity;
 import ph11.songofdeath.battle.internal.entities.characters.PartyMembers;
-import ph11.songofdeath.customui.ButtonWindow;
 import ph11.songofdeath.customui.EntityButton;
 
 public class BattleScreen extends AbstractScreen implements BattleObserver{
     private Table battleScreenTable;
     private Label trashLabel;
-    private Label characterInfo1;
-    private Label characterInfo2;
-    private Label characterInfo3;
-    private Label characterInfo4;
-
-    private ButtonWindow battleWindow;
-    private Dialog infoDialog;
     private EntityButton characterSprite;
     private EntityButton enemySprite;
 
@@ -47,7 +34,8 @@ public class BattleScreen extends AbstractScreen implements BattleObserver{
 
     private final SongOfDeath game;
     private final Stage battleScreenStage;
-
+    private String enemyInfo, characterInfo;
+    private Label enemyLabel, characterLabel;
 
     private static final int OPTIONS_DIALOG_WIDTH = 300;
     public BattleScreen(SongOfDeath game) {
@@ -72,10 +60,38 @@ public class BattleScreen extends AbstractScreen implements BattleObserver{
         attackButton.setSize(20,50);
         battleScreenTable.add(attackButton);
 
+        TextButton runButton = new TextButton("Run", UI_SKIN);
+        runButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent even, float x, float y) {
+                battleManager.decisionMaking("RUN");
+            }
+        });
+        runButton.setSize(20,50);
+        battleScreenTable.add(runButton);
+
+        TextButton defendButton = new TextButton("Guard", UI_SKIN);
+        defendButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent even, float x, float y) {
+                battleManager.decisionMaking("DEFEND");
+            }
+        });
+        defendButton.setSize(20,50);
+        battleScreenTable.add(defendButton);
+
         battleManager = new BattleManager(PartyMembers.activeParty);
         battleManager.addObserver(this);
         battleManager.initBattle(PartyMembers.activeParty);
 
+        characterInfo = new String(battleManager.getActingPartyMember().getName() + " HP: " + battleManager.getActingPartyMember().getCurrentHP()
+                + "/" + battleManager.getActingPartyMember().getTotalStats().getMaxHP());
+        characterLabel = new Label(characterInfo, UI_SKIN);
+        battleScreenTable.add(characterLabel);
+
+        enemyInfo = new String(battleManager.getActingEnemy().getName() + " HP: " + battleManager.getActingEnemy().getCurrentHP() + "/" + battleManager.getActingEnemy().getTotalStats().getMaxHP());
+        enemyLabel = new Label(enemyInfo, UI_SKIN);
+        battleScreenTable.add(enemyLabel);
     }
 
     @Override
@@ -105,11 +121,13 @@ public class BattleScreen extends AbstractScreen implements BattleObserver{
                 enemySprite.addListener(new ClickListener() {
                     @Override
                     public void clicked(InputEvent even, float x, float y) {
-                        battleManager.selectTarget(enemySprite.associatedEntity);
+
+                        System.out.println("Enemy selected!");
                     }
                 });
                 battleScreenTable.add(enemySprite);
                 break;
+
             case PLAYER_ADDED:
                 System.out.println("Adding Players!");
                 CHARACTER_SPRITE_PATH = entity.ENTITY_SPRITE_PATH;
@@ -131,11 +149,15 @@ public class BattleScreen extends AbstractScreen implements BattleObserver{
 
                 battleScreenTable.add(characterSprite);
                 break;
+            case TURN_DONE:
+                characterInfo = new String(battleManager.getActingPartyMember().getName() + " HP: " + battleManager.getActingPartyMember().getCurrentHP() + "/" + battleManager.getActingPartyMember().getTotalStats().getMaxHP());
+                enemyInfo = new String(battleManager.getActingEnemy().getName() + " HP: " + battleManager.getActingEnemy().getCurrentHP() + "/" + battleManager.getActingEnemy().getTotalStats().getMaxHP());
+                characterLabel = new Label(characterInfo, UI_SKIN);
+                enemyLabel = new Label(enemyInfo, UI_SKIN);
+                break;
+
             case BATTLE_END:
                 game.changeScreen(SongOfDeath.ScreenEnum.Overworld);
-                break;
-            case SELECT_TARGET:
-                enemySprite.setDisabled(false);
                 break;
         }
     }
