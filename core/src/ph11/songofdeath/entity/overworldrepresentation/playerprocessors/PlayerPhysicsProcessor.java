@@ -53,7 +53,7 @@ public class PlayerPhysicsProcessor extends PhysicsProcessor {
 
         // check if there is a collision
         boolean hasCollidedMapBoundaries = super.checkCollisionWithMapLayer(entity, level);
-        boolean hasCollidedMapEntities = false; //super.checkCollisionWithMapEntities(entity, level);
+        boolean hasCollidedMapEntities = super.checkCollisionWithMapEntities(entity, level);
         boolean isWalking = (state == OverworldRepresentation.State.WALKING);
         // if there is none, move the player to that position
         if (!hasCollidedMapBoundaries && !hasCollidedMapEntities && isWalking) {

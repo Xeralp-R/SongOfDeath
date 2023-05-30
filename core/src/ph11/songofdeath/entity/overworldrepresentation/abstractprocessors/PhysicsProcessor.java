@@ -183,6 +183,29 @@ abstract public class PhysicsProcessor extends AbstractProcessor implements Proc
     }
 
     /**
+     * Checks collision between two entities on the same map.
+     * @param entitySource The source of the entity, usually denoted as "this" or some other.
+     * @param entityTarget The entity to be checked against.
+     * @return true if there is a collision, false if the two are the same or if there is no collision.
+     */
+    protected boolean isCollision(OverworldRepresentation entitySource, OverworldRepresentation entityTarget) {
+        boolean isCollisionWithMapEntities = false;
+
+        if (entitySource.equals(entityTarget)) {
+            return false;
+        }
+
+        if (entitySource.getBoundingBox().overlaps(entityTarget.getBoundingBox())) {
+            //Collision
+            entitySource.sendMessage(MessageType.COLLISION_WITH_ENTITY, "");
+            isCollisionWithMapEntities = true;
+        }
+
+        return isCollisionWithMapEntities;
+    }
+
+
+    /**
      * Sets the next position of the entity, as given in this processor, as the current position.
      * Informs everyone else of the same via a message.
      * @param entity The entity being moved.
