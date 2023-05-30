@@ -27,15 +27,17 @@ public class BattleScreen extends AbstractScreen implements BattleObserver{
     private static TextureAtlas UI_TEXTUREATLAS = new TextureAtlas(UI_TEXTUREATLAS_PATH);
     private static Skin UI_SKIN = new Skin(Gdx.files.internal(UI_SKIN_PATH), UI_TEXTUREATLAS);
     private String CHARACTER_SPRITE_PATH = "overworldentities/player/temp-character.png";
-    private static Texture CHARACTER_TEXTURE; //= new Texture(CHARACTER_SPRITE_PATH);
+    private static Texture CHARACTER_TEXTURE;
     private String ENEMY_SPRITE_PATH;
     private Texture ENEMY_TEXTURE;
     private BattleManager battleManager;
 
     private final SongOfDeath game;
     private final Stage battleScreenStage;
-    private String enemyInfo, characterInfo;
-    private Label enemyLabel, characterLabel;
+
+    private final TextButton attackButton, defendButton, runButton;
+    private String enemyInfo, characterInfo, notifInfo;
+    private Label enemyLabel = new Label("", UI_SKIN), characterLabel = new Label("", UI_SKIN), notifLabel = new Label("", UI_SKIN);
 
     private static final int OPTIONS_DIALOG_WIDTH = 300;
     public BattleScreen(SongOfDeath game) {
@@ -50,7 +52,7 @@ public class BattleScreen extends AbstractScreen implements BattleObserver{
         battleScreenStage.setDebugAll(true);
 
         trashLabel = new Label("", UI_SKIN);
-        TextButton attackButton = new TextButton("Attack", UI_SKIN);
+        attackButton = new TextButton("Attack", UI_SKIN);
         attackButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent even, float x, float y) {
@@ -60,7 +62,7 @@ public class BattleScreen extends AbstractScreen implements BattleObserver{
         attackButton.setSize(20,50);
         battleScreenTable.add(attackButton);
 
-        TextButton runButton = new TextButton("Run", UI_SKIN);
+        runButton = new TextButton("Run", UI_SKIN);
         runButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent even, float x, float y) {
@@ -70,7 +72,7 @@ public class BattleScreen extends AbstractScreen implements BattleObserver{
         runButton.setSize(20,50);
         battleScreenTable.add(runButton);
 
-        TextButton defendButton = new TextButton("Guard", UI_SKIN);
+        defendButton = new TextButton("Guard", UI_SKIN);
         defendButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent even, float x, float y) {
@@ -87,11 +89,18 @@ public class BattleScreen extends AbstractScreen implements BattleObserver{
         characterInfo = new String(battleManager.getActingPartyMember().getName() + " HP: " + battleManager.getActingPartyMember().getCurrentHP()
                 + "/" + battleManager.getActingPartyMember().getTotalStats().getMaxHP());
         characterLabel = new Label(characterInfo, UI_SKIN);
+        battleScreenTable.row();
         battleScreenTable.add(characterLabel);
 
         enemyInfo = new String(battleManager.getActingEnemy().getName() + " HP: " + battleManager.getActingEnemy().getCurrentHP() + "/" + battleManager.getActingEnemy().getTotalStats().getMaxHP());
         enemyLabel = new Label(enemyInfo, UI_SKIN);
+        battleScreenTable.row();
         battleScreenTable.add(enemyLabel);
+
+        notifLabel = new Label(notifInfo, UI_SKIN);
+        notifLabel.setVisible(false);
+        battleScreenTable.row();
+        battleScreenTable.add(notifLabel).center();
     }
 
     @Override
@@ -149,13 +158,37 @@ public class BattleScreen extends AbstractScreen implements BattleObserver{
 
                 battleScreenTable.add(characterSprite);
                 break;
+            case PLAYER_TURN_START:
+                attackButton.setDisabled(false);
+                defendButton.setDisabled(false);
+                runButton.setDisabled(false);
+                break;
+            case ATTACK:
+                if(entity == battleManager.getActingPartyMember()){
+                    notifInfo = new String(entity.getName() + " attacked " + battleManager.getActingEnemy().getName() + " for "
+                        + battleManager.getDamage() + "!");
+                } else if (entity == battleManager.getActingEnemy()) {
+                    notifInfo = new String(entity.getName() + " attacked " + battleManager.getActingPartyMember().getName() + " for "
+                            + battleManager.getDamage() + "!");
+                }
+                notifLabel.setText(notifInfo);
+                notifLabel.setVisible(true);
+                disableButtons();
+                break;
+            case GUARD:
+                notifInfo = new String(entity.getName() + " guarded!");
+                notifLabel.setText(notifInfo);
+                notifLabel.setVisible(true);
+                disableButtons();
+                break;
             case TURN_DONE:
+                System.out.println("Turn finished!");
+                System.out.println(battleManager.getActingEnemy().getCurrentHP());
                 characterInfo = new String(battleManager.getActingPartyMember().getName() + " HP: " + battleManager.getActingPartyMember().getCurrentHP() + "/" + battleManager.getActingPartyMember().getTotalStats().getMaxHP());
                 enemyInfo = new String(battleManager.getActingEnemy().getName() + " HP: " + battleManager.getActingEnemy().getCurrentHP() + "/" + battleManager.getActingEnemy().getTotalStats().getMaxHP());
-                characterLabel = new Label(characterInfo, UI_SKIN);
-                enemyLabel = new Label(enemyInfo, UI_SKIN);
+                characterLabel.setText(characterInfo);
+                enemyLabel.setText(enemyInfo);
                 break;
-
             case BATTLE_END:
                 game.changeScreen(SongOfDeath.ScreenEnum.Overworld);
                 break;
@@ -184,5 +217,11 @@ public class BattleScreen extends AbstractScreen implements BattleObserver{
         super.dispose();
         battleScreenStage.dispose();
         battleScreenTable.remove();
+    }
+
+    private void disableButtons(){
+        attackButton.setDisabled(true);
+        defendButton.setDisabled(true);
+        runButton.setDisabled(true);
     }
 }

@@ -28,18 +28,17 @@ public class BattleManager extends BattleSubject {
     private static final int ENEMY_PARTY_SIZE = 1;
     private Entity targetEntity = null;
 
-    public boolean isBattleFinished() {
-        return battleFinished;
+    public int getDamage() {
+        return damage;
     }
 
-    public void setBattleFinished(boolean battleFinished) {
-        this.battleFinished = battleFinished;
-    }
+    private int damage;
 
     private boolean battleFinished = true;
 
     public BattleManager(Party playerParty){
     }
+
 
     private void speedSort(ArrayList<Entity> battleEntities) {
         // Sort entities based on speed in descending order
@@ -62,34 +61,35 @@ public class BattleManager extends BattleSubject {
         switch(decision){
             case "ATTACK":
                 if (actingEntity instanceof PartyMembers) {
-                    actingEntity.attack(actingEnemy);
-                    notify(actingEntity, ENEMY_HIT);
+                    damage = actingEntity.attack(actingEnemy);
+                    notify(actingEntity, ATTACK);
+                    notify(null, TURN_DONE);
                 } else if (actingEntity instanceof Enemy) {
-                    actingEntity.attack(actingPartyMember);
-                    notify(actingEntity, PLAYER_HIT);
+                    damage = actingEntity.attack(actingPartyMember);
+                    notify(actingEntity, ATTACK);
+                    notify(null, TURN_DONE);
                 }
                 break;
             case "DEFEND":
                 actingEntity.guard();
                 notify(actingEntity, GUARD);
-                break;
-            case "SKILL":
-                actingEntity.displaySkillList();
-                break;
-            case "ITEM":
-                if (actingEntity instanceof  PartyMembers) {
-                    ((PartyMembers) actingEntity).displayItemList();
-                }
+                notify(null, TURN_DONE);
                 break;
             case "RUN":
                 run();
+                break;
             default:
                 if (targetEntity != null && actingEntity instanceof  Enemy && targetEntity instanceof  PartyMembers) {
-                    actingEntity.attack(targetEntity);
+                    damage = actingEntity.attack(targetEntity);
                 }
                 break;
         }
-        notify(null, TURN_DONE);
+    }
+
+
+    private void run(){
+        notify(null, BATTLE_END);
+        System.out.println("Running!");
     }
 
     private void turn(ArrayList<Entity> battleEntities, Party playerParty, Party enemyParty) {
@@ -110,20 +110,19 @@ public class BattleManager extends BattleSubject {
                 notify(actingEntity, PLAYER_TURN_START);
             }
 
-            // Perform the action for the actingEntity
 
             if (i == listSize - 1) {
                 // Move the entity with the highest speed to the beginning of the list
                 Entity highestSpeedEntity = battleEntities.remove(i);
                 battleEntities.add(0, highestSpeedEntity);
             }
+
+            if(actingPartyMember.getCurrentHP() <= 0 || actingEnemy.getCurrentHP() <= 0){
+                run();
+                break;
+            }
+
         }
-    }
-
-
-    private void run(){
-        notify(null, BATTLE_END);
-        System.out.println("Running!");
     }
 
     public void initBattle(Party playerParty){
@@ -150,16 +149,10 @@ public class BattleManager extends BattleSubject {
 
         speedSort(battleEntities);
 
-        do{
-            playerParty.calculateTotalPartyHP();
-            enemyParty.calculateTotalPartyHP();
+        turn(battleEntities, playerParty, enemyParty);
 
-            if(playerParty.getTotalPartyHP() == 0 || enemyParty.getTotalPartyHP() <= 0){
-                battleFinished = true;
-                notify(null, BATTLE_END);
-            }
-            turn(battleEntities, playerParty, enemyParty);
+        if(actingPartyMember.getCurrentHP() <= 0 || actingEnemy.getCurrentHP() <= 0){
+            run();
         }
-        while(!battleFinished);
     }
 }

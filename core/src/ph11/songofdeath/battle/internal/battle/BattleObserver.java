@@ -9,8 +9,7 @@ public interface BattleObserver {
         PLAYER_ADDED,
         PLAYER_TURN_START,
         TURN_DONE,
-        PLAYER_HIT,
-        ENEMY_HIT,
+        ATTACK,
         BATTLE_END,
         GUARD
     }
